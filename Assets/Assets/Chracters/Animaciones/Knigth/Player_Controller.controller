@@ -22,9 +22,6 @@ AnimatorStateMachine:
     m_State: {fileID: 5054677439847077184}
     m_Position: {x: 500, y: 150, z: 0}
   - serializedVersion: 1
-    m_State: {fileID: 3263130956077190426}
-    m_Position: {x: 535, y: 215, z: 0}
-  - serializedVersion: 1
     m_State: {fileID: 4576108153086841141}
     m_Position: {x: 570, y: -30, z: 0}
   m_ChildStateMachines: []
@@ -243,32 +240,6 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: f35f55fe869aec94a8d3e28a94170e11, type: 2}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!1102 &3263130956077190426
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: KnigthFall-
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 3997165d508226d4ebd03d83bae19292, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
