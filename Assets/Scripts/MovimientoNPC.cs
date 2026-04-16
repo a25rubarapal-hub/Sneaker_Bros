@@ -1,57 +1,72 @@
 using UnityEngine;
 
-public class MovimientoEnemigo : MonoBehaviour
+public class MovimientoNPC : MonoBehaviour
 {
-    [Header("Configuraci�n de Movimiento")]
+    [Header("Configuración de Movimiento")]
     public float velocidad = 2f;
-    private bool moviendoDerecha = true; // Empieza movi�ndose a la derecha
+    public LayerMask capaSueloYEscenario; // Aquí seleccionaremos "Mapa" en el Inspector
+    private bool moviendoDerecha = true;
+
+    [Header("Configuración Visual")]
+    public bool spriteInvertido = true;
+
+    [Header("Interacción con el Jugador")]
+    public string nombreDelBody = "body";
 
     private Rigidbody2D rb;
+    private Collider2D miCollider;
 
     void Start()
     {
-        // Obtenemos el componente Rigidbody2D al iniciar
         rb = GetComponent<Rigidbody2D>();
+        miCollider = GetComponent<Collider2D>();
     }
 
     void Update()
     {
-        // Movemos al enemigo aplicando velocidad constante en el eje X
-        if (moviendoDerecha)
-        {
-            rb.linearVelocity = new Vector2(velocidad, rb.linearVelocity.y);
-        }
-        else
-        {
-            rb.linearVelocity = new Vector2(-velocidad, rb.linearVelocity.y);
-        }
+        // Movimiento constante
+        float velocidadActual = moviendoDerecha ? velocidad : -velocidad;
+        rb.linearVelocity = new Vector2(velocidadActual, rb.linearVelocity.y);
+
+        // Control visual del sprite
+        ActualizarEscala();
     }
 
-    // Se ejecuta autom�ticamente cuando el enemigo choca con algo
     private void OnCollisionEnter2D(Collision2D colision)
     {
-        // Revisamos los puntos de contacto del choque
-        foreach (ContactPoint2D contacto in colision.contacts)
+        // 1. Detección del Jugador (buscando el objeto "body")
+        if (colision.gameObject.name == nombreDelBody)
         {
-            // Comprobamos si el golpe fue por un lado (paredes) analizando la "normal" del choque.
-            // Si el valor absoluto en X es mayor que 0 (aprox 0.5 o m�s), significa que es una pared vertical.
-            if (Mathf.Abs(contacto.normal.x) > 0.5f)
+            // Ignoramos la colisión para que el NPC lo atraviese
+            Physics2D.IgnoreCollision(colision.collider, miCollider);
+            return;
+        }
+
+        // 2. Detección de Paredes usando el LayerMask
+        // Comprobamos si el objeto chocado está en la capa que definimos como mapa
+        if (((1 << colision.gameObject.layer) & capaSueloYEscenario) != 0)
+        {
+            foreach (ContactPoint2D contacto in colision.contacts)
             {
-                Girar();
-                break; // Salimos del bucle para no girar dos veces en el mismo choque
+                // Si chocamos de lado (la normal en X es fuerte)
+                if (Mathf.Abs(contacto.normal.x) > 0.5f)
+                {
+                    moviendoDerecha = !moviendoDerecha;
+                    break;
+                }
             }
         }
     }
 
-    // Funci�n encargada de voltear al enemigo
-    private void Girar()
+    void ActualizarEscala()
     {
-        // Cambiamos la direcci�n l�gica
-        moviendoDerecha = !moviendoDerecha;
+        float direccionVisual = moviendoDerecha ? 1f : -1f;
+        if (spriteInvertido) direccionVisual *= -1f;
 
-        // Volteamos visualmente el sprite multiplicando su escala en X por -1
-        Vector3 escala = transform.localScale;
-        escala.x *= -1;
-        transform.localScale = escala;
+        transform.localScale = new Vector3(
+            Mathf.Abs(transform.localScale.x) * direccionVisual,
+            transform.localScale.y,
+            transform.localScale.z
+        );
     }
 }
