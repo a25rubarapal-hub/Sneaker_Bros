@@ -44,9 +44,6 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: EnSuelo
-    m_EventTreshold: 0
-  - m_ConditionMode: 1
     m_ConditionEvent: Agachado
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}

@@ -6,13 +6,13 @@ using UnityEngine;
 public class PlayerPlatformerFinal : MonoBehaviour
 {
     [Header("Configuración de Movimiento")]
-    public float velocidad = 7f;
-    public float fuerzaSalto = 8f;
-    public float fuerzaCaidaRapida = 15f;
+    public float velocidad = 5f;
+    public float fuerzaSalto = 5f;
+    public float fuerzaCaidaRapida = 10f;
     public float velocidadAgachado = 0.5f;
 
     [Header("Deslizamiento en Pared (Wall Slide)")]
-    public float velocidadDeslizamientoPared = 2f; // Qué tan lento resbala por la pared
+    public float velocidadDeslizamientoPared = 1.5f;
     public Vector2 tamañoCajaPared = new Vector2(0.2f, 0.8f);
     public float offsetPared = 0.4f;
 
@@ -27,12 +27,17 @@ public class PlayerPlatformerFinal : MonoBehaviour
 
     private float movimientoX;
     private bool enSuelo;
-    private bool enPared;
+    private bool enParedDerecha;   // hay pared a la derecha
+    private bool enParedIzquierda; // hay pared a la izquierda
     private bool deslizandoEnPared;
     private bool quiereSaltar;
     private bool estaAgachado;
+    private bool presionaAbajo;
     private bool quiereCaidaRapida;
     private bool mirandoDerecha = true;
+
+    private float runCooldown = 0f;
+    private const float RUN_COOLDOWN_TIME = 0.05f;
 
     void Awake()
     {
@@ -44,26 +49,15 @@ public class PlayerPlatformerFinal : MonoBehaviour
 
     void Update()
     {
-        // 1. DETECCIÓN DE SUELO Y PARED
         ActualizarColisiones();
 
-        // 2. LEER TECLADO
         movimientoX = Input.GetAxisRaw("Horizontal");
-        bool pulsandoS = Input.GetKey(KeyCode.S);
+        presionaAbajo = Input.GetKey(KeyCode.S);
 
-        // 3. LÓGICA DE AGACHARSE Y CAÍDA RÁPIDA
-        if (pulsandoS)
+        if (presionaAbajo)
         {
-            if (enSuelo)
-            {
-                estaAgachado = true;
-                quiereCaidaRapida = false;
-            }
-            else
-            {
-                estaAgachado = false;
-                quiereCaidaRapida = true;
-            }
+            if (enSuelo) { estaAgachado = true; quiereCaidaRapida = false; }
+            else { estaAgachado = false; quiereCaidaRapida = true; }
         }
         else
         {
@@ -71,84 +65,62 @@ public class PlayerPlatformerFinal : MonoBehaviour
             quiereCaidaRapida = false;
         }
 
-        // 4. LÓGICA DE DESLIZAMIENTO EN PARED
-        // Si estamos tocando una pared, NO estamos en el suelo, y el jugador está presionando hacia la pared
-        if (enPared && !enSuelo && movimientoX != 0)
-        {
-            deslizandoEnPared = true;
-        }
-        else
-        {
-            deslizandoEnPared = false;
-        }
+        // FIX TILEMAP: detectamos pared en ambos lados y comprobamos si el input
+        // empuja HACIA esa pared concreta. Sin input → nunca hay wall slide.
+        bool empujandoDerecha = movimientoX > 0 && enParedDerecha;
+        bool empujandoIzquierda = movimientoX < 0 && enParedIzquierda;
+        deslizandoEnPared = !enSuelo && (empujandoDerecha || empujandoIzquierda) && rb.linearVelocity.y < 0;
 
-        // 5. VOLTEAR AL PERSONAJE 
         if (movimientoX > 0 && !mirandoDerecha) Girar();
         else if (movimientoX < 0 && mirandoDerecha) Girar();
 
-        // 6. LEER SALTO
         if (Input.GetKeyDown(KeyCode.W) && enSuelo && !estaAgachado && Mathf.Abs(rb.linearVelocity.y) < 0.1f)
-        {
             quiereSaltar = true;
-        }
 
-        // 7. ACTUALIZAR ANIMATOR
+        if (runCooldown > 0f) runCooldown -= Time.deltaTime;
+
         ActualizarAnimaciones();
     }
 
     void ActualizarColisiones()
     {
-        // Detección de suelo
+        // --- Suelo ---
         Vector2 posicionPies = new Vector2(col.bounds.center.x, col.bounds.center.y - offsetPies);
-        Collider2D[] cosasSuelo = Physics2D.OverlapBoxAll(posicionPies, tamañoCajaSuelo, 0f, capaSuelo);
         enSuelo = false;
-        foreach (Collider2D cosa in cosasSuelo)
-        {
-            if (cosa != col && !cosa.isTrigger) { enSuelo = true; break; }
-        }
+        foreach (Collider2D c in Physics2D.OverlapBoxAll(posicionPies, tamañoCajaSuelo, 0f, capaSuelo))
+            if (c != col && !c.isTrigger) { enSuelo = true; break; }
 
-        // Detección de pared (calcula si la pared está a la derecha o izquierda según hacia dónde miramos)
-        float direccionMirada = mirandoDerecha ? 1f : -1f;
-        Vector2 posicionPared = new Vector2(col.bounds.center.x + (offsetPared * direccionMirada), col.bounds.center.y);
-        Collider2D[] cosasPared = Physics2D.OverlapBoxAll(posicionPared, tamañoCajaPared, 0f, capaSuelo);
-        enPared = false;
-        foreach (Collider2D cosa in cosasPared)
-        {
-            if (cosa != col && !cosa.isTrigger) { enPared = true; break; }
-        }
+   
     }
 
     void ActualizarAnimaciones()
     {
-        if (anim != null)
-        {
-            anim.SetBool("Corriendo", Mathf.Abs(rb.linearVelocity.x) > 0.1f && enSuelo);
-            anim.SetBool("EnSuelo", enSuelo);
-            anim.SetBool("Agachado", estaAgachado);
-            anim.SetFloat("VelocidadY", rb.linearVelocity.y);
-            anim.SetFloat("VelocidadX", Mathf.Abs(rb.linearVelocity.x));
+        if (anim == null) return;
 
-            // Opcional: Si tienes una animación de deslizar pared, puedes añadirla aquí
-            // anim.SetBool("Deslizando", deslizandoEnPared);
-        }
+        bool hayInputCorrer = enSuelo && !estaAgachado && Mathf.Abs(movimientoX) > 0.01f;
+        if (hayInputCorrer) runCooldown = RUN_COOLDOWN_TIME;
+        bool corriendo = runCooldown > 0f && enSuelo && !estaAgachado;
+
+        bool animAgachado = estaAgachado || (!enSuelo && presionaAbajo);
+
+        anim.SetBool("Corriendo", corriendo);
+        anim.SetBool("EnSuelo", enSuelo);
+        anim.SetBool("Agachado", animAgachado);
+        // Comentada hasta que crees el parámetro en el Animator
+        // anim.SetBool("Deslizando", deslizandoEnPared);
+        anim.SetFloat("VelocidadY", rb.linearVelocity.y);
+        anim.SetFloat("VelocidadX", Mathf.Abs(rb.linearVelocity.x));
     }
 
     void FixedUpdate()
     {
         float velActual = estaAgachado ? velocidad * velocidadAgachado : velocidad;
 
-        // Movimiento base
-        rb.linearVelocity = new Vector2(movimientoX * velActual, rb.linearVelocity.y);
+        float velX = deslizandoEnPared ? 0f : movimientoX * velActual;
+        rb.linearVelocity = new Vector2(velX, rb.linearVelocity.y);
 
-        // APLICAR DESLIZAMIENTO DE PARED
-        if (deslizandoEnPared)
-        {
-            // Si la velocidad de caída es mayor que nuestra velocidad de deslizamiento límite, la frenamos
-            if (rb.linearVelocity.y < -velocidadDeslizamientoPared)
-            {
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, -velocidadDeslizamientoPared);
-            }
-        }
+        if (deslizandoEnPared && rb.linearVelocity.y < -velocidadDeslizamientoPared)
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, -velocidadDeslizamientoPared);
 
         if (quiereSaltar)
         {
@@ -157,36 +129,28 @@ public class PlayerPlatformerFinal : MonoBehaviour
             quiereSaltar = false;
         }
 
-        // La caída rápida no debería funcionar si te estás deslizando por la pared
         if (quiereCaidaRapida && rb.linearVelocity.y <= 0 && !deslizandoEnPared)
-        {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, -fuerzaCaidaRapida);
-        }
     }
 
     private void Girar()
     {
         mirandoDerecha = !mirandoDerecha;
-        Vector3 escalaLocal = transform.localScale;
-        escalaLocal.x *= -1;
-        transform.localScale = escalaLocal;
+        Vector3 escala = transform.localScale;
+        escala.x *= -1;
+        transform.localScale = escala;
     }
 
     private void OnDrawGizmos()
     {
         if (col == null) col = GetComponent<Collider2D>();
-        if (col != null)
-        {
-            // Dibujar caja de suelo (Verde)
-            Gizmos.color = Color.green;
-            Vector2 posicionPies = new Vector2(col.bounds.center.x, col.bounds.center.y - offsetPies);
-            Gizmos.DrawWireCube(posicionPies, tamañoCajaSuelo);
+        if (col == null) return;
 
-            // Dibujar caja de pared (Azul)
-            Gizmos.color = Color.blue;
-            float direccionMirada = mirandoDerecha ? 1f : -1f;
-            Vector2 posicionPared = new Vector2(col.bounds.center.x + (offsetPared * direccionMirada), col.bounds.center.y);
-            Gizmos.DrawWireCube(posicionPared, tamañoCajaPared);
-        }
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(
+            new Vector2(col.bounds.center.x, col.bounds.center.y - offsetPies),
+            tamañoCajaSuelo);
+
+       
     }
 }
