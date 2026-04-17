@@ -23,8 +23,7 @@ public class PlayerPlatformerFinal : MonoBehaviour
     {
         Horizontal = Input.GetAxisRaw("Horizontal");
 
-        // 1. VOLTEAR EL PERSONAJE
-        // Si nos movemos a la derecha, escala normal. A la izquierda, escala en negativo.
+        // Flip personaje
         if (Horizontal > 0.0f)
             transform.localScale = new Vector3(1, 1, 1);
         else if (Horizontal < 0.0f)
@@ -35,9 +34,10 @@ public class PlayerPlatformerFinal : MonoBehaviour
         else
             Velocity -= Velocity * Acceleration * Time.deltaTime;
 
-        // 2. EVITAR SALTO INFINITO
-        // Añadimos Mathf.Abs(Rigidbody2D.linearVelocity.y) < 0.05f para asegurar que no está subiendo ni cayendo
-        if (Input.GetKey(KeyCode.Space) && LastJump < Time.time - TimeBetweenJumps && Mathf.Abs(Rigidbody2D.linearVelocity.y) < 0.05f)
+        // Jump
+        if (Input.GetKey(KeyCode.Space) &&
+            LastJump < Time.time - TimeBetweenJumps &&
+            Mathf.Abs(Rigidbody2D.linearVelocity.y) < 0.05f)
         {
             Rigidbody2D.AddForce(Vector2.up * JumpForce);
             LastJump = Time.time;
@@ -46,6 +46,9 @@ public class PlayerPlatformerFinal : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Rigidbody2D.linearVelocity = new Vector2((Mathf.Abs(Velocity) < 0.01f ? 0.0f : Velocity) * Speed, Rigidbody2D.linearVelocity.y);
+        Rigidbody2D.linearVelocity = new Vector2(
+            (Mathf.Abs(Velocity) < 0.01f ? 0.0f : Velocity) * Speed,
+            Rigidbody2D.linearVelocity.y
+        );
     }
 }

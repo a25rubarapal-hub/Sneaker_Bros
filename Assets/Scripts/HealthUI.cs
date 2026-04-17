@@ -9,7 +9,7 @@ public class HealthUI : MonoBehaviour
     public int maxHealth = 3;
     public int currentHealth = 3;
 
-    Image[] hearts;
+    private Image[] hearts;
 
     void Start()
     {
@@ -17,17 +17,29 @@ public class HealthUI : MonoBehaviour
 
         for (int i = 0; i < maxHealth; i++)
         {
-            GameObject h = Instantiate(heartPrefab, heartsParent);
-            hearts[i] = h.GetComponent<Image>();
+            GameObject heart = Instantiate(heartPrefab, heartsParent);
+            hearts[i] = heart.GetComponent<Image>();
         }
 
         UpdateHearts();
     }
 
-    public void TakeDamage(int dmg)
+    public void TakeDamage(int damage)
     {
-        currentHealth -= dmg;
-        if (currentHealth < 0) currentHealth = 0;
+        currentHealth -= damage;
+
+        if (currentHealth < 0)
+            currentHealth = 0;
+
+        UpdateHearts();
+    }
+
+    public void Heal(int amount)
+    {
+        currentHealth += amount;
+
+        if (currentHealth > maxHealth)
+            currentHealth = maxHealth;
 
         UpdateHearts();
     }
