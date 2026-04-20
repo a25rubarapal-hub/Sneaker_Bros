@@ -1,69 +1,33 @@
 using UnityEngine;
 
-public class Tuberia : MonoBehaviour
+public class DetectorTubo : MonoBehaviour
 {
-    [Header("Arrastra aquí a tu Personaje")]
-    public GameObject jugador;
+    public Movimiento scriptPersonaje;
 
-    [Header("Arrastra aquí la Salida correspondiente")]
-    public Transform puntoDeSalida;
-
-    [Header("¿Requiere pulsar Abajo?")]
-    public bool requiereBoton = true;
-
-    private bool jugadorEnZona = false;
-
-    void Update()
+    private void OnTriggerEnter2D(Collider2D col)
     {
-        // Si el jugador está tocando la tubería y pulsa Abajo
-        if (jugadorEnZona && requiereBoton && Input.GetAxisRaw("Vertical") < 0)
+        // Si detectamos que el objeto tiene la etiqueta "Tuberia"
+        if (col.CompareTag("Tuberia"))
         {
-            Teletransportar();
-        }
-    }
+            scriptPersonaje.sobreTubo = true;
+            scriptPersonaje.entradaTubo = col.transform;
 
-    void OnTriggerEnter2D(Collider2D otro)
-    {
-        // ¡Ya no usamos Tags! Comprobamos si el objeto que chocó es exactamente tu jugador
-        if (otro.gameObject == jugador)
-        {
-            jugadorEnZona = true;
-
-            // Si no requiere botón, se teletransporta automáticamente
-            if (!requiereBoton)
+            // Extraemos el script Tuberia para saber a dónde nos lleva
+            Tuberia datosTubo = col.GetComponent<Tuberia>();
+            if (datosTubo != null)
             {
-                Teletransportar();
+                scriptPersonaje.salidaTubo = datosTubo.puntoDeSalida;
             }
         }
     }
 
-    void OnTriggerExit2D(Collider2D otro)
+    private void OnTriggerExit2D(Collider2D col)
     {
-        if (otro.gameObject == jugador)
+        if (col.CompareTag("Tuberia"))
         {
-            jugadorEnZona = false;
-        }
-    }
-
-    void Teletransportar()
-    {
-        if (puntoDeSalida != null && jugador != null)
-        {
-            // Movemos al jugador a la salida
-            jugador.transform.position = puntoDeSalida.position;
-
-            // Le avisamos a la salida que se vuelva sólida
-            SalidaTuberia scriptSalida = puntoDeSalida.GetComponent<SalidaTuberia>();
-            if (scriptSalida != null)
-            {
-                scriptSalida.ActivarPlataforma();
-            }
-
-            jugadorEnZona = false;
-        }
-        else
-        {
-            Debug.LogWarning("¡Falta arrastrar al Jugador o la Salida en el Inspector!");
+            scriptPersonaje.sobreTubo = false;
+            scriptPersonaje.entradaTubo = null;
+            scriptPersonaje.salidaTubo = null;
         }
     }
 }
