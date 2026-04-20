@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Pozole_5
+  m_Name: Pozole 1_3
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.Tilemaps.Tile
-  m_Sprite: {fileID: -497897029, guid: 6975c504031f5fc46b21edec938d0d3a, type: 3}
+  m_Sprite: {fileID: -573035339, guid: 50c599c55e90a104ab485a15e4e5ffaf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
