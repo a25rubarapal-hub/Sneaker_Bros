@@ -2,71 +2,77 @@ using UnityEngine;
 
 public class MovimientoNPC : MonoBehaviour
 {
-    [Header("Configuración de Movimiento")]
-    public float velocidad = 2f;
-    public LayerMask capaSueloYEscenario; // Aquí seleccionaremos "Mapa" en el Inspector
-    private bool moviendoDerecha = true;
+    public float speed = 2f;
+    public int maxHealth = 2;
 
-    [Header("Configuración Visual")]
-    public bool spriteInvertido = true;
+    public float checkDistance = 0.5f;
+    public LayerMask wallLayer;
 
-    [Header("Interacción con el Jugador")]
-    public string nombreDelBody = "body";
-
-    private Rigidbody2D rb;
-    private Collider2D miCollider;
+    private int currentHealth;
+    private bool movingRight = true;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        miCollider = GetComponent<Collider2D>();
+        currentHealth = maxHealth;
     }
 
     void Update()
     {
-        // Movimiento constante
-        float velocidadActual = moviendoDerecha ? velocidad : -velocidad;
-        rb.linearVelocity = new Vector2(velocidadActual, rb.linearVelocity.y);
-
-        // Control visual del sprite
-        ActualizarEscala();
+        Move();
     }
 
-    private void OnCollisionEnter2D(Collision2D colision)
+    void Move()
     {
-        // 1. Detección del Jugador (buscando el objeto "body")
-        if (colision.gameObject.name == nombreDelBody)
-        {
-            // Ignoramos la colisión para que el NPC lo atraviese
-            Physics2D.IgnoreCollision(colision.collider, miCollider);
-            return;
-        }
+        transform.Translate(Vector2.right * speed * Time.deltaTime);
 
-        // 2. Detección de Paredes usando el LayerMask
-        // Comprobamos si el objeto chocado está en la capa que definimos como mapa
-        if (((1 << colision.gameObject.layer) & capaSueloYEscenario) != 0)
+        Vector2 direction = movingRight ? Vector2.right : Vector2.left;
+
+        // 🔥 aquí está el truco
+        Vector2 origin = (Vector2)transform.position + Vector2.up * 0.1f;
+
+        RaycastHit2D hit = Physics2D.Raycast(origin, direction, checkDistance, wallLayer);
+
+        Debug.DrawRay(origin, direction * checkDistance, Color.red);
+
+        if (hit.collider != null)
         {
-            foreach (ContactPoint2D contacto in colision.contacts)
+            Flip();
+        }
+    }
+
+    void Flip()
+    {
+        movingRight = !movingRight;
+
+        Vector3 scale = transform.localScale;
+        scale.x *= -1;
+        transform.localScale = scale;
+
+        speed *= -1;
+    }
+
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+
+        if (currentHealth <= 0)
+            Destroy(gameObject);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            PlayerHealth player = collision.gameObject.GetComponent<PlayerHealth>();
+
+            if (collision.contacts[0].normal.y < -0.5f)
             {
-                // Si chocamos de lado (la normal en X es fuerte)
-                if (Mathf.Abs(contacto.normal.x) > 0.5f)
-                {
-                    moviendoDerecha = !moviendoDerecha;
-                    break;
-                }
+                TakeDamage(1);
+            }
+            else
+            {
+                player.TakeDamage(1);
             }
         }
-    }
-
-    void ActualizarEscala()
-    {
-        float direccionVisual = moviendoDerecha ? 1f : -1f;
-        if (spriteInvertido) direccionVisual *= -1f;
-
-        transform.localScale = new Vector3(
-            Mathf.Abs(transform.localScale.x) * direccionVisual,
-            transform.localScale.y,
-            transform.localScale.z
-        );
     }
 }

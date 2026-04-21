@@ -26,7 +26,7 @@ public class PozoTeleport : MonoBehaviour
 
         player.transform.position = destino.position;
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.4f);
 
         player.CanMove = true;
         player.SetTeleporting(false);

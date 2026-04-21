@@ -1,9 +1,13 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerHealth : MonoBehaviour
 {
     public int maxHealth = 5;
     public int health;
+
+    private bool isInvincible = false;
+    public float invincibleTime = 1f;
 
     void Start()
     {
@@ -25,13 +29,24 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (isInvincible) return; // 🔹 NUEVO
+
         health -= damage;
         health = Mathf.Clamp(health, 0, maxHealth);
+
+        StartCoroutine(Invincibility()); // 🔹 NUEVO
     }
 
     public void Heal(int amount)
     {
         health += amount;
         health = Mathf.Clamp(health, 0, maxHealth);
+    }
+
+    IEnumerator Invincibility()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(invincibleTime);
+        isInvincible = false;
     }
 }
