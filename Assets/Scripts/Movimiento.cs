@@ -14,7 +14,12 @@ public class Movimiento : MonoBehaviour
     private float TimeBetweenJumps = 0.1f;
     private float LastJump;
     public float Velocity;
+
     private bool isCrouching;
+
+    // 🌀 NUEVO: control de teletransporte
+    public bool IsTeleporting { get; private set; }
+    public bool CanMove = true;
 
     private void Start()
     {
@@ -25,9 +30,19 @@ public class Movimiento : MonoBehaviour
     private void Update()
     {
         bool enSuelo = Mathf.Abs(Rigidbody2D.linearVelocity.y) < 0.05f;
+
+        // 🧠 agachado (solo si está en suelo)
         isCrouching = Input.GetKey(KeyCode.S) && enSuelo;
 
-        // 3. Tu l�gica de movimiento original
+        // ❌ si está teletransportándose, no procesa input
+        if (!CanMove)
+        {
+            animator.SetBool("EnSuelo", enSuelo);
+            animator.SetBool("Agachado", false);
+            animator.SetBool("Corriendo", false);
+            return;
+        }
+
         Horizontal = Input.GetAxisRaw("Horizontal");
 
         if (Horizontal > 0.0f)
@@ -40,7 +55,9 @@ public class Movimiento : MonoBehaviour
         else
             Velocity -= Velocity * Acceleration * Time.deltaTime;
 
-        if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.W)) && LastJump < Time.time - TimeBetweenJumps && enSuelo && !isCrouching)
+        if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.W)) &&
+            LastJump < Time.time - TimeBetweenJumps &&
+            enSuelo && !isCrouching)
         {
             Rigidbody2D.AddForce(Vector2.up * JumpForce);
             LastJump = Time.time;
@@ -55,7 +72,19 @@ public class Movimiento : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!CanMove) return;
+
         float currentSpeed = isCrouching ? Speed * CrouchSpeedMultiplier : Speed;
-        Rigidbody2D.linearVelocity = new Vector2((Mathf.Abs(Velocity) < 0.01f ? 0.0f : Velocity) * currentSpeed, Rigidbody2D.linearVelocity.y);
+
+        Rigidbody2D.linearVelocity = new Vector2(
+            (Mathf.Abs(Velocity) < 0.01f ? 0.0f : Velocity) * currentSpeed,
+            Rigidbody2D.linearVelocity.y
+        );
+    }
+
+    // 🌀 NUEVO: usado por el pozo
+    public void SetTeleporting(bool value)
+    {
+        IsTeleporting = value;
     }
 }
