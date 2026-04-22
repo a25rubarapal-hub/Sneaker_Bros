@@ -2,22 +2,24 @@ using UnityEngine;
 
 public class PlayerCameraLink : MonoBehaviour
 {
-    [Header("AsignaciÛn de C·mara")]
-    [Tooltip("Si el cÛdigo no encuentra la c·mara, arr·strala aquÌ manualmente desde la jerarquÌa.")]
+    [Header("Asignaci√≥n de C√°mara")]
     public Transform camaraPrincipal;
 
-    [Header("ConfiguraciÛn de la C·mara")]
+    [Header("Configuraci√≥n de la C√°mara")]
     public float cameraZ = -10f;
-    public float alturaFijaY = 0f;
 
-    [Header("LÌmites (Estilo Mario)")]
+    [Header("L√≠mites (Estilo Mario)")]
     public float limiteDerecho = 2f;
     public float limiteIzquierdo = 2f;
     public bool modoMarioClasico = true;
 
+    [Header("Seguimiento Vertical")]
+    public float offsetVertical = 1f;
+
+    private float alturaMinimaCamara;
+
     void Start()
     {
-        // 1. Si la variable est· vacÌa, intentamos que el cÛdigo la busque solo
         if (camaraPrincipal == null)
         {
             if (Camera.main != null)
@@ -26,19 +28,26 @@ public class PlayerCameraLink : MonoBehaviour
             }
             else
             {
-                // Si falla, te avisamos en la consola
-                Debug.LogWarning("No se detectÛ la c·mara autom·ticamente. Por favor, arrastra tu c·mara al hueco 'Camara Principal' en el script de tu Jugador.");
+                Debug.LogWarning("No se detect√≥ la c√°mara autom√°ticamente.");
             }
+        }
+
+        // Guardamos la altura inicial como l√≠mite inferior
+        if (camaraPrincipal != null)
+        {
+            alturaMinimaCamara = camaraPrincipal.position.y;
         }
     }
 
     void LateUpdate()
     {
-        // 2. Medida de seguridad: Si no hay c·mara, no hacemos nada para evitar errores
         if (camaraPrincipal == null) return;
 
-        // 3. LÛgica de seguimiento estilo Mario
         Vector3 camPos = camaraPrincipal.position;
+
+        // =========================
+        // MOVIMIENTO HORIZONTAL
+        // =========================
         float distanciaX = transform.position.x - camPos.x;
 
         if (distanciaX > limiteDerecho)
@@ -50,10 +59,19 @@ public class PlayerCameraLink : MonoBehaviour
             camPos.x = transform.position.x + limiteIzquierdo;
         }
 
-        camPos.y = alturaFijaY;
+        // =========================
+        // MOVIMIENTO VERTICAL (NUEVO)
+        // =========================
+        float objetivoY = transform.position.y + offsetVertical;
+
+        // la c√°mara solo sube, nunca baja por debajo del inicio
+        camPos.y = Mathf.Max(alturaMinimaCamara, objetivoY);
+
+        // =========================
+        // Z FIJO
+        // =========================
         camPos.z = cameraZ;
 
-        // 4. Aplicamos el movimiento
         camaraPrincipal.position = camPos;
     }
 }
