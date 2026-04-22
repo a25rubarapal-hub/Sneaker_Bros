@@ -8,6 +8,8 @@ public class MovimientoNPC : MonoBehaviour
     public float checkDistance = 0.5f;
     public LayerMask wallLayer;
 
+    public bool spriteInvertido = true; // 🔹 AÑADIDO
+
     private int currentHealth;
     private bool movingRight = true;
 
@@ -23,16 +25,15 @@ public class MovimientoNPC : MonoBehaviour
 
     void Move()
     {
-        transform.Translate(Vector2.right * speed * Time.deltaTime);
+        float direction = movingRight ? 1f : -1f;
+        transform.Translate(Vector2.right * direction * speed * Time.deltaTime);
 
-        Vector2 direction = movingRight ? Vector2.right : Vector2.left;
-
-        // 🔥 aquí está el truco
+        Vector2 rayDirection = movingRight ? Vector2.right : Vector2.left;
         Vector2 origin = (Vector2)transform.position + Vector2.up * 0.1f;
 
-        RaycastHit2D hit = Physics2D.Raycast(origin, direction, checkDistance, wallLayer);
+        RaycastHit2D hit = Physics2D.Raycast(origin, rayDirection, checkDistance, wallLayer);
 
-        Debug.DrawRay(origin, direction * checkDistance, Color.red);
+        Debug.DrawRay(origin, rayDirection * checkDistance, Color.red);
 
         if (hit.collider != null)
         {
@@ -45,10 +46,12 @@ public class MovimientoNPC : MonoBehaviour
         movingRight = !movingRight;
 
         Vector3 scale = transform.localScale;
-        scale.x *= -1;
-        transform.localScale = scale;
 
-        speed *= -1;
+        float dir = movingRight ? 1 : -1;
+        if (spriteInvertido) dir *= -1; // 🔹 COMPENSA SPRITE AL REVÉS
+
+        scale.x = Mathf.Abs(scale.x) * dir;
+        transform.localScale = scale;
     }
 
     public void TakeDamage(int damage)
