@@ -19,6 +19,6 @@ public void ComenzarJuego()
     public void SalirJuego()
     {
         Application.Quit();
-        Debug.Log("Saliendo del juego... en editor no pasa nada, normal.");
+        Debug.Log("Saliendo del juego...");
     }
 }
