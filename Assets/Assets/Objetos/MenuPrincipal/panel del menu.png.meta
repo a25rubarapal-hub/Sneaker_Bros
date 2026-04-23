@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2daa09418fdea1a478cfea06346b6b96
+guid: 07eed3016531e0d498fe157975af8562
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2353376327185201564
-    second: wife_0
+      213: -4543613202356111958
+    second: panel del menu_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: wife_0
+      name: panel del menu_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 680
-        height: 680
+        x: 24
+        y: 26
+        width: 73
+        height: 74
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 466005bf2b0275fd0800000000000000
-      internalID: -2353376327185201564
+      spriteID: aa5f9c49dd7d1f0c0800000000000000
+      internalID: -4543613202356111958
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      wife_0: -2353376327185201564
+      panel del menu_0: -4543613202356111958
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
