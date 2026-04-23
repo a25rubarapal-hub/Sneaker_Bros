@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class Movimiento : MonoBehaviour
 {
@@ -87,4 +88,16 @@ public class Movimiento : MonoBehaviour
     {
         IsTeleporting = value;
     }
+
+    public class PlayerScore : MonoBehaviour
+{
+    public int puntuacion = 0;
+    public TextMeshProUGUI puntuacionText;
+
+    public void SumarMoneda()
+    {
+        puntuacion++;
+        puntuacionText.text = puntuacion.ToString();
+    }
+}
 }
