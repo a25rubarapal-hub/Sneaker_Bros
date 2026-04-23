@@ -4,6 +4,7 @@ using TMPro;
 
 public class MonedaPick : MonoBehaviour
 {
+   
     private int puntuacion;
     public TextMeshProUGUI puntuacionText;
     void Start()
@@ -14,9 +15,9 @@ public class MonedaPick : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
 
-       if (collision.CompareTag("Player"))
+       if (collision.CompareTag("Moneda"))
         {
-            Destroy(gameObject);
+            Destroy(collision.gameObject);
             puntuacion++;
             puntuacionText.text = puntuacion.ToString();
         }
