@@ -12,7 +12,10 @@ public class JefeMario : MonoBehaviour
     public float velocidadPatrulla = 2f;
     public float velocidadPersecucion = 4f;
     public float distanciaAtaque = 1.5f;
+    private bool isInvincible = false;
+   
 
+    public float invincibleTime = 1f;
     [Header("Tiempos")]
     public float tiempoReaccion = 0.5f;
     public float tiempoAtaque = 0.5f;
@@ -129,10 +132,15 @@ public class JefeMario : MonoBehaviour
     }
      public void TakeDamage(int damage)
     {
+        if (isInvincible) return;
+
         currentHealth -= damage;
 
+        
         if (currentHealth <= 0)
             Destroy(gameObject);
+
+        StartCoroutine(Invincibility());
     }
 
     private void OnCollisionEnter2D(Collision2D col)
@@ -182,6 +190,12 @@ public class JefeMario : MonoBehaviour
             }
         }
     }
+    IEnumerator Invincibility()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(invincibleTime);
+        isInvincible = false;
+    }
 
-   
+
 }
