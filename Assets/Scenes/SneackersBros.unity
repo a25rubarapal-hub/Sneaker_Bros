@@ -194,7 +194,7 @@ Animator:
   m_GameObject: {fileID: 238117440}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: e317b42f682bafe4c95e58e764217e4c, type: 2}
+  m_Controller: {fileID: 9100000, guid: b8691a21652b6e3468ec0675e1860fe4, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -548,7 +548,7 @@ Animator:
   m_GameObject: {fileID: 639471314}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: e317b42f682bafe4c95e58e764217e4c, type: 2}
+  m_Controller: {fileID: 9100000, guid: b8691a21652b6e3468ec0675e1860fe4, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -4115,7 +4115,7 @@ Animator:
   m_GameObject: {fileID: 1652659957}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: e317b42f682bafe4c95e58e764217e4c, type: 2}
+  m_Controller: {fileID: 9100000, guid: b8691a21652b6e3468ec0675e1860fe4, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -4311,7 +4311,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 943e7b70a6f35604b819b34964c926b6, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -4388,7 +4388,7 @@ Transform:
   m_GameObject: {fileID: 1725201949}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 27.18, y: 3.65, z: 0}
+  m_LocalPosition: {x: 27.77, y: 3.46, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4488,7 +4488,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91bbbb243afdfa4093da35aa7502004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JefeMario
-  estadoActual: 0
   velocidadPatrulla: 2
   velocidadPersecucion: 4
   distanciaAtaque: 1.5
