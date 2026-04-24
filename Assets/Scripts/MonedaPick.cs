@@ -1,27 +1,30 @@
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class MonedaPick : MonoBehaviour
 {
-   
+
     private int puntuacion;
-    public TextMeshProUGUI puntuacionText;
+    public TextMesh puntuacionText;
     void Start()
     {
         puntuacion = 0;
     }
 
+
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-
-       if (collision.CompareTag("Moneda"))
+        if (collision.CompareTag("Player"))
         {
-            Destroy(collision.gameObject);
-            puntuacion++;
-            puntuacionText.text = puntuacion.ToString();
+            PlayerScore score = collision.GetComponent<PlayerScore>();
+
+            if (score != null)
+            {
+                score.SumarMoneda();
+            }
+
+            Destroy(gameObject);
+
         }
-       
     }
-    
 }
