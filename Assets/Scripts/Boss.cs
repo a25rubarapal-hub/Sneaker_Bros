@@ -21,13 +21,15 @@ public class JefeMario : MonoBehaviour
     private Rigidbody2D rb;
     private Animator animator;
     private Transform jugador;
-
+     public int maxHealth = 67;
+      private int currentHealth;
     private bool mirandoDerecha = true;
     private bool jugadorEnRango = false;
     private float tiempoCambioDireccion;
 
     void Start()
     {
+         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 
@@ -125,6 +127,13 @@ public class JefeMario : MonoBehaviour
     {
         tiempoCambioDireccion = Random.Range(2f, 5f);
     }
+     public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+
+        if (currentHealth <= 0)
+            Destroy(gameObject);
+    }
 
     private void OnCollisionEnter2D(Collision2D col)
     {
@@ -132,6 +141,19 @@ public class JefeMario : MonoBehaviour
         {
             Girar();
             AsignarTiempoPatrulla();
+        }
+         if (col.gameObject.CompareTag("Player"))
+        {
+            PlayerHealth player = col.gameObject.GetComponent<PlayerHealth>();
+
+            if (col.contacts[0].normal.y < -0.5f)
+            {
+                TakeDamage(1);
+            }
+            else
+            {
+                player.TakeDamage(1);
+            }
         }
     }
 
@@ -160,4 +182,6 @@ public class JefeMario : MonoBehaviour
             }
         }
     }
+
+   
 }

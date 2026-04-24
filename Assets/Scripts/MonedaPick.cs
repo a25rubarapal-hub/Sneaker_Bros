@@ -2,16 +2,6 @@ using UnityEngine;
 
 public class MonedaPick : MonoBehaviour
 {
-
-    private int puntuacion;
-    public TextMesh puntuacionText;
-    void Start()
-    {
-        puntuacion = 0;
-    }
-
-
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
@@ -24,7 +14,6 @@ public class MonedaPick : MonoBehaviour
             }
 
             Destroy(gameObject);
-
         }
     }
 }
