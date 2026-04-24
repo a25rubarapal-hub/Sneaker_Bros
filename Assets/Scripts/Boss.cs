@@ -5,8 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class JefeMario : MonoBehaviour
 {
-    public enum Estado { Patrulla, Reaccion, Persecucion, Ataque, Espera }
-    [SerializeField] private Estado estadoActual = Estado.Patrulla;
+    enum Estado { Patrulla, Reaccion, Persecucion, Ataque, Espera }
+    private Estado estadoActual = Estado.Patrulla;
 
     [Header("Movimiento")]
     public float velocidadPatrulla = 2f;
@@ -31,14 +31,15 @@ public class JefeMario : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 
-        rb.gravityScale = 1f;
-        rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
+        //rb.gravityScale = 1f;
+        //rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
 
         AsignarTiempoPatrulla();
     }
 
     void Update()
     {
+        
         // Control de animación de caminar
         bool mov = Mathf.Abs(rb.linearVelocity.x) > 0.1f;
         animator.SetBool("Caminando", mov);
@@ -62,10 +63,12 @@ public class JefeMario : MonoBehaviour
             if (dist <= distanciaAtaque)
                 StartCoroutine(SecuenciaAtaque());
         }
+        
     }
 
     void FixedUpdate()
     {
+        
         float velY = rb.linearVelocity.y;
 
         switch (estadoActual)
@@ -140,7 +143,7 @@ public class JefeMario : MonoBehaviour
             jugadorEnRango = true;
 
             if (estadoActual == Estado.Patrulla)
-                StartCoroutine(SecuenciaReaccion());
+               StartCoroutine(SecuenciaReaccion());
         }
     }
 
