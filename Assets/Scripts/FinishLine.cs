@@ -1,9 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FinishLine : MonoBehaviour
 {
-    public GameObject scoreboardScreen;
-    public PlayerScore playerScore;
+    public GameObject scoreboardScreen; // Panel del scoreboard
+    public PlayerScore playerScore;     // Referencia al PlayerScore
 
     private bool triggered = false;
 
@@ -15,15 +15,23 @@ public class FinishLine : MonoBehaviour
         {
             triggered = true;
 
+            // ⏸ Pausar el juego
             Time.timeScale = 0f;
 
-            scoreboardScreen.SetActive(true);
+            // 📊 Activar scoreboard
+            if (scoreboardScreen != null)
+                scoreboardScreen.SetActive(true);
 
+            // 🧠 Pasar puntuación al UI
             ScoreboardUI ui = scoreboardScreen.GetComponent<ScoreboardUI>();
 
             if (ui != null && playerScore != null)
             {
                 ui.MostrarFinal(playerScore.puntuacion);
+            }
+            else
+            {
+                Debug.LogWarning("Falta referencia en FinishLine");
             }
         }
     }

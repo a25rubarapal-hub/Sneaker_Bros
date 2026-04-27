@@ -11,6 +11,8 @@ public class ScoreboardUI : MonoBehaviour
 
     public void MostrarFinal(int puntuacion)
     {
+        Debug.Log("PUNTUACIÓN FINAL: " + puntuacion);
+        puntuacionText.text = "Puntuación: " + puntuacion;
         puntuacionFinal = puntuacion;
 
         if (puntuacionText != null)
