@@ -1195,6 +1195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCoins
   monedas: 0
+  monedasText: {fileID: 1973101858}
   playerHealth: {fileID: 682299842}
   playerScore: {fileID: 682299843}
 --- !u!1 &694716531
