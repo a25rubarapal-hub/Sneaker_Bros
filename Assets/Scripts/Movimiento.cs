@@ -83,7 +83,7 @@ public class Movimiento : MonoBehaviour
         );
     }
 
-    // 🌀 NUEVO: usado por el pozo
+    // usado por el pozo
     public void SetTeleporting(bool value)
     {
         IsTeleporting = value;

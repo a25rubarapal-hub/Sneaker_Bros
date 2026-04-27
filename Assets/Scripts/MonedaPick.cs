@@ -6,11 +6,11 @@ public class MonedaPick : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            PlayerScore score = collision.GetComponent<PlayerScore>();
+            PlayerCoins coins = collision.GetComponent<PlayerCoins>();
 
-            if (score != null)
+            if (coins != null)
             {
-                score.SumarMoneda();
+                coins.SumarMoneda();
             }
 
             Destroy(gameObject);

@@ -13,7 +13,10 @@ public class PlayerHealth : MonoBehaviour
     public float invincibleTime = 1f;
 
     [Header("UI Death Screen")]
-    public GameObject gameOverScreen; // 🔹 arrastra aquí la imagen
+    public GameObject gameOverScreen;
+
+    [Header("Score System")]
+    public PlayerScore playerScore;
 
     void Start()
     {
@@ -43,23 +46,19 @@ public class PlayerHealth : MonoBehaviour
     {
         isDead = true;
 
-        // parar jugador
         GetComponent<Movimiento>().enabled = false;
 
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
         if (rb != null)
             rb.linearVelocity = Vector2.zero;
 
-        // 🔹 espera 1 segundo antes de mostrar pantalla
         yield return new WaitForSeconds(1f);
 
         if (gameOverScreen != null)
             gameOverScreen.SetActive(true);
 
-        // 🔹 espera otro segundo
         yield return new WaitForSeconds(1f);
 
-        // 🔹 cargar menú principal
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -67,8 +66,17 @@ public class PlayerHealth : MonoBehaviour
     {
         if (isDead) return;
 
+        int oldHealth = health;
+
         health += amount;
         health = Mathf.Clamp(health, 0, maxHealth);
+
+        // recompensa si realmente sube vida
+        if (health > oldHealth)
+        {
+            if (playerScore != null)
+                playerScore.SumarPuntos(200);
+        }
     }
 
     IEnumerator Invincibility()
