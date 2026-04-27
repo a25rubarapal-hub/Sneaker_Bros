@@ -8,7 +8,9 @@ public class MovimientoNPC : MonoBehaviour
     public float checkDistance = 0.5f;
     public LayerMask wallLayer;
 
-    public bool spriteInvertido = true; // 🔹 AÑADIDO
+    public bool spriteInvertido = true;
+
+    public PlayerScore playerScore; // 💯 NUEVO
 
     private int currentHealth;
     private bool movingRight = true;
@@ -48,7 +50,7 @@ public class MovimientoNPC : MonoBehaviour
         Vector3 scale = transform.localScale;
 
         float dir = movingRight ? 1 : -1;
-        if (spriteInvertido) dir *= -1; // 🔹 COMPENSA SPRITE AL REVÉS
+        if (spriteInvertido) dir *= -1;
 
         scale.x = Mathf.Abs(scale.x) * dir;
         transform.localScale = scale;
@@ -59,7 +61,20 @@ public class MovimientoNPC : MonoBehaviour
         currentHealth -= damage;
 
         if (currentHealth <= 0)
-            Destroy(gameObject);
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        // 💯 DAR PUNTOS AL JUGADOR
+        if (playerScore != null)
+        {
+            playerScore.SumarPuntos(500);
+        }
+
+        Destroy(gameObject);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

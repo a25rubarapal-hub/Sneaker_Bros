@@ -6,9 +6,11 @@ public class PlayerScore : MonoBehaviour
     public int puntuacion = 0;
     public TextMeshProUGUI puntuacionText;
 
-    public void SumarMoneda()
+    public void SumarPuntos(int puntos)
     {
-        puntuacion++;
-        puntuacionText.text = puntuacion.ToString();
+        puntuacion += puntos;
+
+        if (puntuacionText != null)
+            puntuacionText.text = puntuacion.ToString();
     }
 }
