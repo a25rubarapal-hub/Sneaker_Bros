@@ -1,8 +1,11 @@
 using UnityEngine;
+using TMPro;
 
 public class PlayerCoins : MonoBehaviour
 {
     public int monedas = 0;
+
+    public TextMeshProUGUI monedasText;
 
     public PlayerHealth playerHealth;
     public PlayerScore playerScore;
@@ -11,15 +14,26 @@ public class PlayerCoins : MonoBehaviour
     {
         monedas++;
 
-        // 💯 puntuación
+        // 💯 puntos
         if (playerScore != null)
             playerScore.SumarPuntos(100);
 
-        // ❤️ vida cada 10 monedas
-        if (monedas % 10 == 0)
+        // ❤️ vida
+        if (monedas % 10 == 0 && playerHealth != null)
+            playerHealth.Heal(1);
+
+        ActualizarUI();
+    }
+
+    void ActualizarUI()
+    {
+        if (monedasText != null)
         {
-            if (playerHealth != null)
-                playerHealth.Heal(1);
+            monedasText.text = monedas.ToString();
+        }
+        else
+        {
+            Debug.LogWarning("MonedasText NO asignado en PlayerCoins");
         }
     }
 }

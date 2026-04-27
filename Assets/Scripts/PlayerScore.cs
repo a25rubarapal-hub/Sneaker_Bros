@@ -9,8 +9,14 @@ public class PlayerScore : MonoBehaviour
     public void SumarPuntos(int puntos)
     {
         puntuacion += puntos;
+        ActualizarUI();
+    }
 
+    void ActualizarUI()
+    {
         if (puntuacionText != null)
+        {
             puntuacionText.text = puntuacion.ToString();
+        }
     }
 }
