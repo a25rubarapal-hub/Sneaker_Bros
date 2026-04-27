@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class ScoreboardUI : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class ScoreboardUI : MonoBehaviour
 
     public void MostrarFinal(int puntuacion)
     {
+        Debug.Log("MostrarFinal llamado con puntuación: " + puntuacion);
         puntuacionFinal = puntuacion;
 
         if (puntuacionText != null)
@@ -32,5 +34,12 @@ public class ScoreboardUI : MonoBehaviour
         }
 
         Debug.Log($"Jugador: {nombre} | Puntos: {puntuacionFinal}");
+    }
+
+        public void VolverAlMenu()
+    {
+        Time.timeScale = 1f; // por si el juego estaba pausado
+
+        SceneManager.LoadScene("MainMenu");
     }
 }
