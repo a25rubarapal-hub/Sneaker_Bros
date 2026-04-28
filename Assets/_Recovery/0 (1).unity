@@ -4352,8 +4352,8 @@ GameObject:
   - component: {fileID: 1725201955}
   - component: {fileID: 1725201958}
   - component: {fileID: 1725201959}
-  - component: {fileID: 1725201961}
   - component: {fileID: 1725201960}
+  - component: {fileID: 1725201961}
   m_Layer: 0
   m_Name: Skeleton Idle_0
   m_TagString: Untagged
@@ -4491,7 +4491,7 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.2}
+  m_Offset: {x: 0, y: 0}
   m_Radius: 10
 --- !u!114 &1725201958
 MonoBehaviour:
@@ -4512,15 +4512,15 @@ MonoBehaviour:
   distanciaDeteccionCercana: 1
   maxHealth: 50
   tiempoInvencible: 1
-  knockbackSaltoX: 9.72
-  knockbackSaltoY: 6.04
+  knockbackSaltoX: 9.01
+  knockbackSaltoY: 4.94
   knockbackGolpeX: 7
   knockbackGolpeY: 2.5
   duracionKnockback: 0.5
   giroSaltoCabeza: 420
-  tiempoPausaTrasImpacto: 0.2
+  tiempoPausaTrasImpacto: 1
   multiplicadorRetrocesoGolpe: 1.8
-  tiempoEntreGolpesContacto: 0.12
+  tiempoEntreGolpesContacto: 0.45
   saltoJugadorMinY: 0.2
   distanciaEvasionSalto: 3.56
   velocidadEvasionSalto: 1.59
@@ -4534,24 +4534,15 @@ MonoBehaviour:
   tiempoPatrullaMax: 5
   nombreEstadoAnimAtaque: Attack
   nombreEstadoAnimIdle: idle
-  duracionAtaqueNoInterrumpible: 1
+  duracionAtaqueNoInterrumpible: 2
   mascaraTerreno:
     serializedVersion: 2
     m_Bits: 0
   distanciaChequeoPared: 0.7
   avanceChequeoSuelo: 0.55
   distanciaChequeoSuelo: 1.2
-  bodyCollider: {fileID: 1725201961}
-  damageCollider: {fileID: 1725201960}
-  radarCollider: {fileID: 1725201955}
-  radarOffsetPorDefecto: {x: 0, y: 0.2}
-  radarSizePorDefecto: {x: 4.5, y: 2.4}
-  damageOffsetPorDefecto: {x: 0.7, y: 0.2}
-  damageSizePorDefecto: {x: 1.2, y: 1.6}
-  paramCaminando: Caminando
-  triggerAtacar: Atacar
-  triggerReaccionar: Reacionar
-  distanciaAtaqueSaltoJugador: 1.25
+  radarCollider: {fileID: 0}
+  damageCollider: {fileID: 0}
 --- !u!50 &1725201959
 Rigidbody2D:
   serializedVersion: 5
@@ -4609,11 +4600,11 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.28333354, y: -0.4781165}
+  m_Offset: {x: -0.5078051, y: -0.412315}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -4623,7 +4614,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.8666673, y: 2.2437668}
+  m_Size: {x: 1.3623128, y: 2.4681752}
   m_EdgeRadius: 0
 --- !u!61 &1725201961
 BoxCollider2D:
@@ -4655,11 +4646,11 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.36843228, y: -0.36820352}
+  m_Offset: {x: 0.31140494, y: -0.48786926}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -4669,7 +4660,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.5631356, y: 2.52964}
+  m_Size: {x: 2.92281, y: 2.3903446}
   m_EdgeRadius: 0
 --- !u!1 &1751377654
 GameObject:
@@ -4924,7 +4915,7 @@ Transform:
   m_GameObject: {fileID: 1955948961}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.5, y: -2.06, z: 0}
+  m_LocalPosition: {x: 45.55, y: 5.63, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5216,7 +5207,7 @@ Transform:
   m_GameObject: {fileID: 2017537518}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.94, y: -0.48, z: 0}
+  m_LocalPosition: {x: 6.68, y: -3.49, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
