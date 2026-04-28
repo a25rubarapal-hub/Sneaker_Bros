@@ -1095,6 +1095,7 @@ GameObject:
   - component: {fileID: 682299841}
   - component: {fileID: 682299843}
   - component: {fileID: 682299844}
+  - component: {fileID: 682299845}
   m_Layer: 0
   m_Name: knight_0
   m_TagString: Player
@@ -1372,6 +1373,18 @@ MonoBehaviour:
   monedasText: {fileID: 1973101858}
   playerHealth: {fileID: 682299842}
   playerScore: {fileID: 682299843}
+--- !u!114 &682299845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 682299832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c610e703261165143a13996b8572c5cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mondongo
 --- !u!1 &694716531
 GameObject:
   m_ObjectHideFlags: 0
