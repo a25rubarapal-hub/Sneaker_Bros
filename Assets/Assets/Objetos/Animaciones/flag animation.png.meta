@@ -115,19 +115,19 @@ TextureImporter:
       name: flag animation_0
       rect:
         serializedVersion: 2
-        x: 4
-        y: 1
-        width: 34
-        height: 52
+        x: 0
+        y: 0
+        width: 60
+        height: 60
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: beba87481285ed5a0800000000000000
+      spriteID: 6372d57d764179b488241a554cec1f6d
       internalID: -6494656711642010645
       vertices: []
       indices: 
@@ -137,19 +137,19 @@ TextureImporter:
       name: flag animation_1
       rect:
         serializedVersion: 2
-        x: 64
-        y: 1
-        width: 32
-        height: 52
+        x: 60
+        y: 0
+        width: 60
+        height: 60
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: be292f6a22de0c3c0800000000000000
+      spriteID: d77d542e713885642a9bed833af4d987
       internalID: -4341209307699571989
       vertices: []
       indices: 
@@ -159,19 +159,19 @@ TextureImporter:
       name: flag animation_2
       rect:
         serializedVersion: 2
-        x: 124
-        y: 1
-        width: 33
-        height: 52
+        x: 120
+        y: 0
+        width: 60
+        height: 60
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 373464493e4203040800000000000000
+      spriteID: eb615c6136d2acd4488f81ed363b95b0
       internalID: 4625237377173308275
       vertices: []
       indices: 
@@ -181,19 +181,19 @@ TextureImporter:
       name: flag animation_3
       rect:
         serializedVersion: 2
-        x: 184
-        y: 1
-        width: 34
-        height: 52
+        x: 180
+        y: 0
+        width: 60
+        height: 60
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 7f74cef2e1e4da9f0800000000000000
+      spriteID: 1144f56e37e960746b72f3630ea202f0
       internalID: -455622095734552585
       vertices: []
       indices: 
@@ -203,19 +203,19 @@ TextureImporter:
       name: flag animation_4
       rect:
         serializedVersion: 2
-        x: 244
-        y: 1
-        width: 32
-        height: 52
+        x: 240
+        y: 0
+        width: 60
+        height: 60
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: a255780f49a582d50800000000000000
+      spriteID: 14357b0d0caf3104bb88ed076c39a264
       internalID: 6712714840332784938
       vertices: []
       indices: 
@@ -225,7 +225,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 34224c7f423534b4babeb916fb017394
     internalID: 0
     vertices: []
     indices: 
@@ -233,7 +233,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":5.0,"y":1.0},"gridSpriteSize":{"x":60.0,"y":60.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       flag animation_0: -6494656711642010645
       flag animation_1: -4341209307699571989
