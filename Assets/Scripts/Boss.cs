@@ -1,10 +1,11 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
 public class JefeMario : MonoBehaviour
 {
-    enum Estado { Patrulla, Reaccion, Persecucion, Ataque, Espera, Retroceso }
+    enum Estado { Patrulla, Reaccion, Persecucion, Ataque, Espera, Retroceso, BusquedaUltimaPos }
     Estado estadoActual = Estado.Patrulla;
 
     [Header("Movimiento del jefe")]
@@ -68,6 +69,23 @@ public class JefeMario : MonoBehaviour
     [SerializeField] Vector2 damageOffsetPorDefecto = new Vector2(0.7f, 0.2f);
     [SerializeField] Vector2 damageSizePorDefecto = new Vector2(1.2f, 1.6f);
 
+    // ── Radar de pared: ahora Collider2D genérico (admite CircleCollider2D u otros) ──
+    [Header("Radar de Pared (Tilemap)")]
+    [Tooltip("Asigna aquí el Collider2D (p.ej. CircleCollider2D) que actuará como radar de pared")]
+    [SerializeField] Collider2D wallRadar;
+    [Tooltip("Tilemap específico que el jefe debe evitar (asígnalo en el Inspector)")]
+    [SerializeField] Tilemap tilemapObjetivo;
+    [Tooltip("Si está activo, el jefe ignora el radar de pared mientras persigue al jugador")]
+    public bool ignorarParedEnPersecucion = false;
+
+    [Header("Búsqueda - Último lugar conocido")]
+    [Tooltip("Velocidad al ir al último lugar conocido del jugador")]
+    public float velocidadBusqueda = 3f;
+    [Tooltip("Distancia mínima al punto para darlo como alcanzado")]
+    public float distanciaLlegadaBusqueda = 0.4f;
+    [Tooltip("Segundos sin detectar al jugador antes de volver a patrullar")]
+    public float tiempoMaxBusqueda = 20f;
+
     [Header("Parámetros de Animator")]
     [SerializeField] string paramCaminando = "Caminando";
     [SerializeField] string triggerAtacar = "Atacar";
@@ -115,6 +133,13 @@ public class JefeMario : MonoBehaviour
     int hashAtacar;
     int hashReaccionar;
 
+    Vector2 ultimaPosJugador;
+    bool ultimaPosValida = false;
+    float timerBusqueda = 0f;
+    TilemapCollider2D tilemapColliderObjetivo;
+
+    bool wallRadarTocaPared = false;
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -123,6 +148,7 @@ public class JefeMario : MonoBehaviour
         InicializarHashesAnimator();
         AutoAsignarColliders();
         AsegurarConfiguracionHitboxes();
+        ObtenerColliderTilemap();
         ActualizarObjetivoDesdeRadar();
         IniciarPatrulla();
     }
@@ -133,11 +159,17 @@ public class JefeMario : MonoBehaviour
             AsegurarConfiguracionHitboxes();
     }
 
+    void ObtenerColliderTilemap()
+    {
+        if (tilemapObjetivo != null)
+            tilemapColliderObjetivo = tilemapObjetivo.GetComponent<TilemapCollider2D>();
+    }
+
     void InicializarHashesAnimator()
     {
-        hashCaminando = string.IsNullOrWhiteSpace(paramCaminando) ? 0 : Animator.StringToHash(paramCaminando);
-        hashAtacar = string.IsNullOrWhiteSpace(triggerAtacar) ? 0 : Animator.StringToHash(triggerAtacar);
-        hashReaccionar = string.IsNullOrWhiteSpace(triggerReaccionar) ? 0 : Animator.StringToHash(triggerReaccionar);
+        hashCaminando  = string.IsNullOrWhiteSpace(paramCaminando)   ? 0 : Animator.StringToHash(paramCaminando);
+        hashAtacar     = string.IsNullOrWhiteSpace(triggerAtacar)    ? 0 : Animator.StringToHash(triggerAtacar);
+        hashReaccionar = string.IsNullOrWhiteSpace(triggerReaccionar)? 0 : Animator.StringToHash(triggerReaccionar);
     }
 
     void AutoAsignarColliders()
@@ -220,12 +252,46 @@ BuscarRadar:
             if (damageCollider.offset == Vector2.zero)
                 damageCollider.offset = damageOffsetPorDefecto;
         }
+
+        // wallRadar: funciona con cualquier Collider2D (CircleCollider2D, BoxCollider2D, etc.)
+        if (wallRadar != null)
+            wallRadar.isTrigger = true;
+    }
+
+    bool ComprobarWallRadarTocaPared()
+    {
+        if (wallRadar == null) return false;
+        if (tilemapColliderObjetivo == null) return false;
+
+        return wallRadar.IsTouching(tilemapColliderObjetivo);
+    }
+
+    bool ParedDetectadaActiva()
+    {
+        if (!wallRadarTocaPared) return false;
+        if (ignorarParedEnPersecucion && estadoActual == Estado.Persecucion) return false;
+        return true;
+    }
+
+    float DireccionEscapePared()
+    {
+        return mirandoDerecha ? -1f : 1f;
     }
 
     void Update()
     {
         if (!jugadorEnRango || jugador == null)
             ActualizarObjetivoDesdeRadar();
+
+        if (jugadorEnRango && jugador != null)
+        {
+            ultimaPosJugador = jugador.position;
+            ultimaPosValida = true;
+            timerBusqueda = 0f;
+        }
+
+        wallRadarTocaPared = ComprobarWallRadarTocaPared();
+
         ActualizarInvencibilidad();
         ActualizarCooldownGolpe();
         ActualizarKnockbackJugador();
@@ -244,9 +310,21 @@ BuscarRadar:
             return;
         }
 
+        if (ParedDetectadaActiva() && estadoActual != Estado.Ataque && estadoActual != Estado.Reaccion)
+        {
+            float dirEscape = DireccionEscapePared();
+            MirarHaciaDireccion(dirEscape);
+            rb.linearVelocity = new Vector2(dirEscape * velocidadPatrulla, velY);
+            return;
+        }
+
         if (evadiendoSalto)
         {
-            rb.linearVelocity = new Vector2(dirEvasionSalto * (velocidadEvasionSalto * multiplicadorEvasionHaciaAtras), velY);
+            float dirFinal = dirEvasionSalto;
+            if (wallRadarTocaPared)
+                dirFinal = DireccionEscapePared();
+
+            rb.linearVelocity = new Vector2(dirFinal * (velocidadEvasionSalto * multiplicadorEvasionHaciaAtras), velY);
             return;
         }
 
@@ -262,6 +340,19 @@ BuscarRadar:
                 if (Mathf.Abs(dirPersecucionActual) < 0.01f)
                     dirPersecucionActual = mirandoDerecha ? 1f : -1f;
                 rb.linearVelocity = new Vector2(dirPersecucionActual * velocidadPersecucion, velY);
+                break;
+
+            case Estado.BusquedaUltimaPos:
+                if (ultimaPosValida)
+                {
+                    float dirBusq = ultimaPosJugador.x >= transform.position.x ? 1f : -1f;
+                    MirarHaciaDireccion(dirBusq);
+                    rb.linearVelocity = new Vector2(dirBusq * velocidadBusqueda, velY);
+                }
+                else
+                {
+                    rb.linearVelocity = new Vector2(0f, velY);
+                }
                 break;
 
             case Estado.Retroceso:
@@ -331,6 +422,10 @@ BuscarRadar:
         }
 
         dirEvasionSalto = jugador.position.x >= transform.position.x ? -1f : 1f;
+
+        if (wallRadarTocaPared && dirEvasionSalto != DireccionEscapePared())
+            dirEvasionSalto *= -1f;
+
         if (!PuedeMoverEnDireccion(dirEvasionSalto))
             dirEvasionSalto *= -1f;
 
@@ -349,7 +444,9 @@ BuscarRadar:
         bool moviendose = estadoActual == Estado.Patrulla
             || estadoActual == Estado.Persecucion
             || estadoActual == Estado.Retroceso
-            || evadiendoSalto;
+            || estadoActual == Estado.BusquedaUltimaPos
+            || evadiendoSalto
+            || ParedDetectadaActiva();
 
         bool caminando = moviendose && Mathf.Abs(rb.linearVelocity.x) > 0.1f;
         SetCaminando(caminando);
@@ -365,12 +462,13 @@ BuscarRadar:
     {
         switch (estadoActual)
         {
-            case Estado.Patrulla:    LogicaPatrulla();    break;
-            case Estado.Reaccion:    LogicaReaccion();    break;
-            case Estado.Persecucion: LogicaPersecucion(); break;
-            case Estado.Ataque:      LogicaAtaque();      break;
-            case Estado.Espera:      LogicaEspera();      break;
-            case Estado.Retroceso:   LogicaRetroceso();   break;
+            case Estado.Patrulla:          LogicaPatrulla();          break;
+            case Estado.Reaccion:          LogicaReaccion();          break;
+            case Estado.Persecucion:       LogicaPersecucion();       break;
+            case Estado.Ataque:            LogicaAtaque();            break;
+            case Estado.Espera:            LogicaEspera();            break;
+            case Estado.Retroceso:         LogicaRetroceso();         break;
+            case Estado.BusquedaUltimaPos: LogicaBusquedaUltimaPos(); break;
         }
     }
 
@@ -397,7 +495,11 @@ BuscarRadar:
 
     void LogicaPersecucion()
     {
-        if (jugador == null) return;
+        if (jugador == null)
+        {
+            IniciarBusquedaUltimaPos();
+            return;
+        }
 
         float dirDeseada = jugador.position.x >= transform.position.x ? 1f : -1f;
         if (PuedeMoverEnDireccion(dirDeseada))
@@ -411,6 +513,49 @@ BuscarRadar:
         float dist = Vector2.Distance(transform.position, jugador.position);
         if (dist <= distanciaAtaque)
             IniciarAtaque();
+    }
+
+    void LogicaBusquedaUltimaPos()
+    {
+        if (jugadorEnRango && jugador != null)
+        {
+            estadoActual = Estado.Persecucion;
+            return;
+        }
+
+        timerBusqueda += Time.deltaTime;
+
+        if (timerBusqueda >= tiempoMaxBusqueda)
+        {
+            ultimaPosValida = false;
+            timerBusqueda = 0f;
+            IniciarPatrulla();
+            return;
+        }
+
+        if (!ultimaPosValida)
+        {
+            IniciarPatrulla();
+            return;
+        }
+
+        float distAlPunto = Mathf.Abs(transform.position.x - ultimaPosJugador.x);
+        if (distAlPunto <= distanciaLlegadaBusqueda)
+        {
+            estadoActual = Estado.Espera;
+            timer = tiempoEspera;
+        }
+    }
+
+    void IniciarBusquedaUltimaPos()
+    {
+        if (!ultimaPosValida)
+        {
+            IniciarPatrulla();
+            return;
+        }
+        estadoActual = Estado.BusquedaUltimaPos;
+        timerBusqueda = 0f;
     }
 
     void LogicaAtaque()
@@ -453,8 +598,10 @@ BuscarRadar:
         timer -= Time.deltaTime;
         if (timer <= 0f)
         {
-            if (jugadorEnRango)
+            if (jugadorEnRango && jugador != null)
                 estadoActual = Estado.Persecucion;
+            else if (ultimaPosValida)
+                IniciarBusquedaUltimaPos();
             else
                 IniciarPatrulla();
         }
@@ -797,7 +944,7 @@ BuscarRadar:
         if (TocaRadar(col))
         {
             ActualizarObjetivoDesdeRadar();
-            if (estadoActual == Estado.Patrulla)
+            if (estadoActual == Estado.Patrulla || estadoActual == Estado.BusquedaUltimaPos)
                 IniciarReaccion();
         }
     }
@@ -821,8 +968,11 @@ BuscarRadar:
 
         ActualizarObjetivoDesdeRadar();
 
-        if (!jugadorEnRango && estadoActual == Estado.Persecucion)
-            IniciarPatrulla();
+        if (!jugadorEnRango)
+        {
+            if (estadoActual == Estado.Persecucion)
+                IniciarBusquedaUltimaPos();
+        }
     }
 
     void Girar()
