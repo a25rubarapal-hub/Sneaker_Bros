@@ -10,7 +10,7 @@ public class MovimientoNPC : MonoBehaviour
 
     public bool spriteInvertido = true;
 
-    public PlayerScore playerScore; // 💯 NUEVO
+    public PlayerScore playerScore;
 
     private int currentHealth;
     private bool movingRight = true;
@@ -68,7 +68,7 @@ public class MovimientoNPC : MonoBehaviour
 
     void Die()
     {
-        // 💯 DAR PUNTOS AL JUGADOR
+        // DAR PUNTOS AL JUGADOR
         if (playerScore != null)
         {
             playerScore.SumarPuntos(500);
