@@ -18,7 +18,7 @@ public class Movimiento : MonoBehaviour
 
     private bool isCrouching;
 
-    // 🌀 NUEVO: control de teletransporte
+    // control de teletransporte
     public bool IsTeleporting { get; private set; }
     public bool CanMove = true;
 
@@ -32,10 +32,10 @@ public class Movimiento : MonoBehaviour
     {
         bool enSuelo = Mathf.Abs(Rigidbody2D.linearVelocity.y) < 0.05f;
 
-        // 🧠 agachado (solo si está en suelo)
+        // agachado (solo si está en suelo)
         isCrouching = Input.GetKey(KeyCode.S) && enSuelo;
 
-        // ❌ si está teletransportándose, no procesa input
+        // si está teletransportándose, no procesa input
         if (!CanMove)
         {
             animator.SetBool("EnSuelo", enSuelo);
