@@ -23,7 +23,7 @@ public class FinishLine : MonoBehaviour
                 scoreboardScreen.SetActive(true);
 
             // 🧠 Pasar puntuación al UI
-            ScoreboardUI ui = scoreboardScreen.GetComponent<ScoreboardUI>();
+            ScoreboardUI ui = scoreboardScreen.GetComponentInChildren<ScoreboardUI>();
 
             if (ui != null && playerScore != null)
             {
