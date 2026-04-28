@@ -277,6 +277,84 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3882102}
   m_CullTransparentMesh: 1
+--- !u!1 &225030757
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 225030759}
+  - component: {fileID: 225030758}
+  m_Layer: 0
+  m_Name: Hitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!61 &225030758
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 225030757}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.0036010742, y: -0.5849333}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.3817444, y: 2.1926298}
+  m_EdgeRadius: 0
+--- !u!4 &225030759
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 225030757}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.86, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1725201952}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &271896336
 GameObject:
   m_ObjectHideFlags: 0
@@ -379,6 +457,74 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &291715274
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 291715276}
+  - component: {fileID: 291715275}
+  m_Layer: 0
+  m_Name: HitboxC
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!58 &291715275
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 291715274}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: -0.15055704}
+  m_Radius: 2.1244345
+--- !u!4 &291715276
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 291715274}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1725201952}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &433047033
 GameObject:
   m_ObjectHideFlags: 0
@@ -4874,7 +5020,6 @@ GameObject:
   - component: {fileID: 1725201958}
   - component: {fileID: 1725201959}
   - component: {fileID: 1725201961}
-  - component: {fileID: 1725201960}
   m_Layer: 0
   m_Name: Skeleton Idle_0
   m_TagString: Untagged
@@ -4975,7 +5120,9 @@ Transform:
   m_LocalPosition: {x: 27.77, y: 3.46, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 225030759}
+  - {fileID: 291715276}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!58 &1725201955
@@ -5032,30 +5179,30 @@ MonoBehaviour:
   distanciaAtaque: 1.5
   distanciaDeteccionCercana: 1
   maxHealth: 50
-  tiempoInvencible: 1
-  knockbackSaltoX: 9.72
-  knockbackSaltoY: 6.04
-  knockbackGolpeX: 7
-  knockbackGolpeY: 2.5
-  duracionKnockback: 0.5
-  giroSaltoCabeza: 420
+  tiempoInvencible: 0.1
+  knockbackSaltoX: 14.11
+  knockbackSaltoY: 6.69
+  knockbackGolpeX: 8.78
+  knockbackGolpeY: 2.98
+  duracionKnockback: 1.02
+  giroSaltoCabeza: 360
   tiempoPausaTrasImpacto: 0.2
-  multiplicadorRetrocesoGolpe: 1.8
-  tiempoEntreGolpesContacto: 0.12
+  multiplicadorRetrocesoGolpe: 3
+  tiempoEntreGolpesContacto: 0
   saltoJugadorMinY: 0.2
   distanciaEvasionSalto: 3.56
   velocidadEvasionSalto: 1.59
   duracionEvasionSalto: 0.74
   multiplicadorEvasionHaciaAtras: 1.35
-  tiempoReaccion: 0.83
-  tiempoAtaque: 0.5
-  tiempoEspera: 1
-  tiempoRetroceso: 0.4
+  tiempoReaccion: 0.2
+  tiempoAtaque: 0
+  tiempoEspera: 0.1
+  tiempoRetroceso: 1
   tiempoPatrullaMin: 2
   tiempoPatrullaMax: 5
   nombreEstadoAnimAtaque: Attack
   nombreEstadoAnimIdle: idle
-  duracionAtaqueNoInterrumpible: 1
+  duracionAtaqueNoInterrumpible: 0.1
   mascaraTerreno:
     serializedVersion: 2
     m_Bits: 0
@@ -5063,12 +5210,18 @@ MonoBehaviour:
   avanceChequeoSuelo: 0.55
   distanciaChequeoSuelo: 1.2
   bodyCollider: {fileID: 1725201961}
-  damageCollider: {fileID: 1725201960}
+  damageCollider: {fileID: 225030758}
   radarCollider: {fileID: 1725201955}
   radarOffsetPorDefecto: {x: 0, y: 0.2}
   radarSizePorDefecto: {x: 4.5, y: 2.4}
   damageOffsetPorDefecto: {x: 0.7, y: 0.2}
   damageSizePorDefecto: {x: 1.2, y: 1.6}
+  wallRadar: {fileID: 291715275}
+  tilemapObjetivo: {fileID: 1405613771}
+  ignorarParedEnPersecucion: 1
+  velocidadBusqueda: 3
+  distanciaLlegadaBusqueda: 0.4
+  tiempoMaxBusqueda: 20
   paramCaminando: Caminando
   triggerAtacar: Atacar
   triggerReaccionar: Reacionar
@@ -5100,52 +5253,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &1725201960
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1725201949}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.28333354, y: -0.4781165}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.3, y: 3.2}
-    newSize: {x: 2.3, y: 3.2}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 2.8666673, y: 2.2437668}
-  m_EdgeRadius: 0
 --- !u!61 &1725201961
 BoxCollider2D:
   m_ObjectHideFlags: 0
