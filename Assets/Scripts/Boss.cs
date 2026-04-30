@@ -9,56 +9,49 @@ public class JefeMario : MonoBehaviour
     Estado estadoActual = Estado.Patrulla;
 
     [Header("Movimiento del jefe")]
-    public float velocidadPatrulla = 2f;
-    public float velocidadPersecucion = 4f;
-    public float velocidadRetroceso = 7f;
-    public float distanciaAtaque = 1.5f;
-    public float distanciaDeteccionCercana = 1.0f;
+    private float velocidadPatrulla = 3f;
+    private float velocidadPersecucion = 5f;
+    private float velocidadRetroceso = 7f;
+    private float distanciaAtaque = 2.0f;
+ 
 
     [Header("Salud e invencibilidad")]
-    public int maxHealth = 67;
-    public float tiempoInvencible = 0.15f;
+    private int maxHealth = 25;
 
     [Header("Knockback que recibe el JUGADOR")]
-    public float knockbackSaltoX = 4.5f;
-    public float knockbackSaltoY = 9f;
-    public float knockbackGolpeX = 12f;
-    public float knockbackGolpeY = 5f;
-    public float duracionKnockback = 0.5f;
-    public float giroSaltoCabeza = 420f;
-
-    [Header("Recuperación tras golpes")]
-    public float tiempoPausaTrasImpacto = 1f;
-    public float multiplicadorRetrocesoGolpe = 5f;
+    private float knockbackSaltoX = 7f;
+    private float knockbackSaltoY = 8f;
+    private float knockbackGolpeX = 20f;
+    private float knockbackGolpeY = 8f;   
 
     [Header("Daño por contacto continuo")]
-    public float tiempoEntreGolpesContacto = 0.45f;
+    private float tiempoEntreGolpesContacto = 0.1f;
 
     [Header("Evasión al salto del jugador")]
-    public float saltoJugadorMinY = 0.2f;
-    public float distanciaEvasionSalto = 2.2f;
-    public float velocidadEvasionSalto = 5.5f;
-    public float duracionEvasionSalto = 0.28f;
-    public float multiplicadorEvasionHaciaAtras = 1.35f;
+    private float saltoJugadorMinY = 0.2f;
+    private float distanciaEvasionSalto = 4.5f;
+    private float velocidadEvasionSalto = 4f;
+    private float duracionEvasionSalto = 0.25f;
+    private float multiplicadorEvasionHaciaAtras = 1.35f;
 
     [Header("Duración de cada estado (segundos)")]
-    public float tiempoReaccion = 0.5f;
-    public float tiempoAtaque = 0.5f;
-    public float tiempoEspera = 1f;
-    public float tiempoRetroceso = 1.2f;
-    public float tiempoPatrullaMin = 2f;
-    public float tiempoPatrullaMax = 5f;
+    private float tiempoReaccion = 0.5f;
+    private float tiempoAtaque = 0.5f;
+    private float tiempoEspera = 0.1f;
+    private float tiempoRetroceso = 1.2f;
+    private float tiempoPatrullaMin = 2f;
+    private float tiempoPatrullaMax = 5f;
 
     [Header("Animacion de ataque")]
-    public string nombreEstadoAnimAtaque = "Attack";
-    public string nombreEstadoAnimIdle = "idle";
-    public float duracionAtaqueNoInterrumpible = 2f;
+    private string nombreEstadoAnimAtaque = "Attack";
+    private string nombreEstadoAnimIdle = "idle";
+    
 
     [Header("Lectura de terreno")]
-    public LayerMask mascaraTerreno;
-    public float distanciaChequeoPared = 0.7f;
-    public float avanceChequeoSuelo = 0.55f;
-    public float distanciaChequeoSuelo = 1.2f;
+    private LayerMask mascaraTerreno;
+    private float distanciaChequeoPared = 0.7f;
+    private float avanceChequeoSuelo = 0.55f;
+    private float distanciaChequeoSuelo = 1.2f;
 
     [Header("Colliders (2D)")]
     [SerializeField] BoxCollider2D bodyCollider;
@@ -76,15 +69,15 @@ public class JefeMario : MonoBehaviour
     [Tooltip("Tilemap específico que el jefe debe evitar (asígnalo en el Inspector)")]
     [SerializeField] Tilemap tilemapObjetivo;
     [Tooltip("Si está activo, el jefe ignora el radar de pared mientras persigue al jugador")]
-    public bool ignorarParedEnPersecucion = false;
+    private bool ignorarParedEnPersecucion = true;
 
     [Header("Búsqueda - Último lugar conocido")]
     [Tooltip("Velocidad al ir al último lugar conocido del jugador")]
-    public float velocidadBusqueda = 3f;
+    private float velocidadBusqueda = 3f;
     [Tooltip("Distancia mínima al punto para darlo como alcanzado")]
-    public float distanciaLlegadaBusqueda = 0.4f;
+    private float distanciaLlegadaBusqueda = 0.4f;
     [Tooltip("Segundos sin detectar al jugador antes de volver a patrullar")]
-    public float tiempoMaxBusqueda = 20f;
+    private float tiempoMaxBusqueda = 20f;
 
     [Header("Parámetros de Animator")]
     [SerializeField] string paramCaminando = "Caminando";
@@ -92,7 +85,7 @@ public class JefeMario : MonoBehaviour
     [SerializeField] string triggerReaccionar = "Reacionar";
 
     [Header("Decisiones IA 2D")]
-    public float distanciaAtaqueSaltoJugador = 1.25f;
+    private float distanciaAtaqueSaltoJugador = 8.5f;
 
     Rigidbody2D rb;
     Animator animator;
@@ -623,7 +616,7 @@ BuscarRadar:
             else
             {
                 estadoActual = Estado.Espera;
-                timer = Mathf.Max(tiempoPausaTrasImpacto, tiempoEspera);
+                
             }
         }
     }
@@ -664,7 +657,6 @@ BuscarRadar:
         esperandoFinAnimAtaque = true;
         entroEnEstadoAnimAtaque = false;
         ataqueNoInterrumpible = true;
-        timerAtaqueNoInterrumpible = Mathf.Max(0.05f, duracionAtaqueNoInterrumpible);
         SetCaminando(false);
 
         if (animator != null && hashAtacar != 0)
@@ -832,7 +824,7 @@ BuscarRadar:
         }
 
         esInvencible = true;
-        timerInvencible = tiempoInvencible;
+        
     }
 
     void EmpujarJugador(Rigidbody2D rbJ, float fuerzaX, float fuerzaY, float dirX)
@@ -843,7 +835,7 @@ BuscarRadar:
         knockbackDirX = dirX;
         knockbackFuerzaX = fuerzaX;
         jugadorEnKnockback = true;
-        timerKnockback = duracionKnockback;
+       
 
         rbJ.linearVelocity = new Vector2(dirX * fuerzaX, fuerzaY);
     }
@@ -869,11 +861,10 @@ BuscarRadar:
 
             float ladoX = col.transform.position.x > transform.position.x ? 1f : -1f;
             EmpujarJugador(rbJ, knockbackSaltoX, knockbackSaltoY, ladoX);
-            if (rbJ != null)
-                rbJ.angularVelocity = -ladoX * giroSaltoCabeza;
+           
 
             estadoActual = Estado.Retroceso;
-            multiplicadorRetrocesoActual = multiplicadorRetrocesoGolpe;
+            
             dirRetrocesoActual = DireccionEsquiveLateralAleatoria();
             timer = tiempoRetroceso;
         }
@@ -923,7 +914,6 @@ BuscarRadar:
         float ladoX = playerTransform.position.x > transform.position.x ? 1f : -1f;
         EmpujarJugador(rbJ, knockbackGolpeX, knockbackGolpeY, ladoX);
         estadoActual = Estado.Espera;
-        timer = Mathf.Max(tiempoPausaTrasImpacto, tiempoEspera);
         cooldownGolpeContacto = tiempoEntreGolpesContacto;
     }
 
