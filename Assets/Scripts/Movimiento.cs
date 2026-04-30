@@ -10,6 +10,7 @@ public class Movimiento : MonoBehaviour
 
     private Rigidbody2D Rigidbody2D;
     private Animator animator;
+    private AudioSource audioSource;
 
     private float Horizontal;
     private float TimeBetweenJumps = 0.1f;
@@ -18,24 +19,29 @@ public class Movimiento : MonoBehaviour
 
     private bool isCrouching;
 
-    // control de teletransporte
     public bool IsTeleporting { get; private set; }
     public bool CanMove = true;
+
+    [Header("Sonido")]
+    public AudioClip sonidoSalto;
+    [Range(0f, 1f)] public float volumenSalto = 1f;
 
     private void Start()
     {
         Rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f;
     }
 
     private void Update()
     {
         bool enSuelo = Mathf.Abs(Rigidbody2D.linearVelocity.y) < 0.05f;
 
-        // agachado (solo si está en suelo)
         isCrouching = Input.GetKey(KeyCode.S) && enSuelo;
 
-        // si está teletransportándose, no procesa input
         if (!CanMove)
         {
             animator.SetBool("EnSuelo", enSuelo);
@@ -62,6 +68,13 @@ public class Movimiento : MonoBehaviour
         {
             Rigidbody2D.AddForce(Vector2.up * JumpForce);
             LastJump = Time.time;
+
+            if (sonidoSalto != null)
+            {
+                audioSource.clip = sonidoSalto;
+                audioSource.volume = volumenSalto;
+                audioSource.Play();
+            }
         }
 
         animator.SetBool("EnSuelo", enSuelo);
@@ -83,21 +96,8 @@ public class Movimiento : MonoBehaviour
         );
     }
 
-    // usado por el pozo
     public void SetTeleporting(bool value)
     {
         IsTeleporting = value;
     }
-
-    public class PlayerScore : MonoBehaviour
-{
-    public int puntuacion = 0;
-    public TextMeshProUGUI puntuacionText;
-
-    public void SumarMoneda()
-    {
-        puntuacion++;
-        puntuacionText.text = puntuacion.ToString();
-    }
-}
 }
