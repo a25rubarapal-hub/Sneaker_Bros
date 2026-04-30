@@ -5653,7 +5653,7 @@ MonoBehaviour:
   distanciaAtaque: 1.5
   distanciaDeteccionCercana: 1
   maxHealth: 50
-  tiempoInvencible: 0.1
+  tiempoInvencible: 0
   knockbackSaltoX: 14.11
   knockbackSaltoY: 6.69
   knockbackGolpeX: 8.78
