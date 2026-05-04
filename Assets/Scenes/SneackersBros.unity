@@ -755,7 +755,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -2577,7 +2577,7 @@ RectTransform:
   m_GameObject: {fileID: 724764935}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5.2335, y: 5.2335, z: 5.2335}
+  m_LocalScale: {x: 3.7994163, y: 3.7994163, z: 3.7994163}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 271896340}
@@ -2625,6 +2625,58 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 724764935}
   m_CullTransparentMesh: 1
+--- !u!1 &732600084
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 732600086}
+  - component: {fileID: 732600085}
+  m_Layer: 5
+  m_Name: Timer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &732600085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732600084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f0d25554b78b974eab22808fdd03881, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameTimer
+  tiempoInicial: 300
+  tiempoActual: 0
+  timerActivo: 1
+  timerText: {fileID: 971854157}
+--- !u!224 &732600086
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732600084}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.515, y: 1.515, z: 1.515}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 400, y: 197.68977}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &732790577
 GameObject:
   m_ObjectHideFlags: 0
@@ -2711,7 +2763,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -292.6, y: 35.5}
+  m_AnchoredPosition: {x: -292.6, y: 68}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &847162117
@@ -3477,6 +3529,143 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ScoreboardUI
   puntuacionText: {fileID: 1641333236}
   nombreInput: {fileID: 1400328840}
+--- !u!1 &971854156
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 971854159}
+  - component: {fileID: 971854158}
+  - component: {fileID: 971854157}
+  m_Layer: 5
+  m_Name: TimerText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &971854157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 971854156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: 000
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 36
+  m_fontSizeBase: 36
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 11.715317, y: 0, z: 117.73113, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &971854158
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 971854156}
+  m_CullTransparentMesh: 1
+--- !u!224 &971854159
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 971854156}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1531322986}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 410.4, y: 166.9}
+  m_SizeDelta: {x: 200, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1047466755
 GameObject:
   m_ObjectHideFlags: 0
@@ -6289,6 +6478,7 @@ RectTransform:
   - {fileID: 2005274541}
   - {fileID: 680679984}
   - {fileID: 1722016629}
+  - {fileID: 971854159}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -6722,42 +6912,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91bbbb243afdfa4093da35aa7502004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JefeMario
-  velocidadPatrulla: 2
-  velocidadPersecucion: 4
-  velocidadRetroceso: 3
-  distanciaAtaque: 1.5
-  distanciaDeteccionCercana: 1
-  maxHealth: 50
-  tiempoInvencible: 0
-  knockbackSaltoX: 14.11
-  knockbackSaltoY: 6.69
-  knockbackGolpeX: 8.78
-  knockbackGolpeY: 2.98
-  duracionKnockback: 1.02
-  giroSaltoCabeza: 360
-  tiempoPausaTrasImpacto: 0.2
-  multiplicadorRetrocesoGolpe: 3
-  tiempoEntreGolpesContacto: 0
-  saltoJugadorMinY: 0.2
-  distanciaEvasionSalto: 3.56
-  velocidadEvasionSalto: 1.59
-  duracionEvasionSalto: 0.74
-  multiplicadorEvasionHaciaAtras: 1.35
-  tiempoReaccion: 0.2
-  tiempoAtaque: 0
-  tiempoEspera: 0.1
-  tiempoRetroceso: 1
-  tiempoPatrullaMin: 2
-  tiempoPatrullaMax: 5
-  nombreEstadoAnimAtaque: Attack
-  nombreEstadoAnimIdle: idle
-  duracionAtaqueNoInterrumpible: 0.1
-  mascaraTerreno:
-    serializedVersion: 2
-    m_Bits: 0
-  distanciaChequeoPared: 0.7
-  avanceChequeoSuelo: 0.55
-  distanciaChequeoSuelo: 1.2
   bodyCollider: {fileID: 1725201961}
   damageCollider: {fileID: 225030758}
   radarCollider: {fileID: 1725201955}
@@ -6767,14 +6921,9 @@ MonoBehaviour:
   damageSizePorDefecto: {x: 1.2, y: 1.6}
   wallRadar: {fileID: 291715275}
   tilemapObjetivo: {fileID: 1405613771}
-  ignorarParedEnPersecucion: 1
-  velocidadBusqueda: 3
-  distanciaLlegadaBusqueda: 0.4
-  tiempoMaxBusqueda: 20
   paramCaminando: Caminando
   triggerAtacar: Atacar
   triggerReaccionar: Reacionar
-  distanciaAtaqueSaltoJugador: 1.25
 --- !u!50 &1725201959
 Rigidbody2D:
   serializedVersion: 5
@@ -8229,3 +8378,4 @@ SceneRoots:
   - {fileID: 2054183516}
   - {fileID: 861782337}
   - {fileID: 1842987424}
+  - {fileID: 732600086}
