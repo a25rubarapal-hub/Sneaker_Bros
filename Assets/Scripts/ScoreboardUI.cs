@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 
+
 public class ScoreboardUI : MonoBehaviour
 {
     public TMP_Text puntuacionText;
