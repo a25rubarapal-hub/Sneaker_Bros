@@ -121,7 +121,6 @@ public class JefeMario : MonoBehaviour
     bool esperandoFinAnimAtaque = false;
     bool entroEnEstadoAnimAtaque = false;
     bool ataqueNoInterrumpible = false;
-    float timerAtaqueNoInterrumpible = 0f;
     int hashCaminando;
     int hashAtacar;
     int hashReaccionar;
@@ -553,37 +552,39 @@ BuscarRadar:
 
     void LogicaAtaque()
     {
-        if (ataqueNoInterrumpible)
-        {
-            timerAtaqueNoInterrumpible -= Time.deltaTime;
-            if (timerAtaqueNoInterrumpible > 0f)
-                return;
-
-            ataqueNoInterrumpible = false;
-            timerAtaqueNoInterrumpible = 0f;
-        }
-
         timer -= Time.deltaTime;
 
-        if (timer <= 0f)
+        if (esperandoFinAnimAtaque)
         {
-            esperandoFinAnimAtaque = false;
-            ResolverAtaquePorTriggerSiCorresponde();
-            ataqueNoInterrumpible = false;
-            timerAtaqueNoInterrumpible = 0f;
-            estadoActual = Estado.Espera;
-            timer = tiempoEspera;
+            if (AnimacionAtaqueTerminada())
+            {
+                FinalizarAtaque();
+                return;
+            }
+
+            // Fallback: si el trigger no consigue entrar en el estado de ataque,
+            // no dejamos al jefe bloqueado para siempre.
+            if (!entroEnEstadoAnimAtaque && timer <= 0f)
+            {
+                FinalizarAtaque();
+                return;
+            }
+
             return;
         }
 
-        if (esperandoFinAnimAtaque && !AnimacionAtaqueTerminada())
-            return;
+        if (timer <= 0f)
+            FinalizarAtaque();
+    }
 
+    void FinalizarAtaque()
+    {
+        esperandoFinAnimAtaque = false;
         ResolverAtaquePorTriggerSiCorresponde();
         ataqueNoInterrumpible = false;
-        timerAtaqueNoInterrumpible = 0f;
         estadoActual = Estado.Espera;
         timer = tiempoEspera;
+        ResetearTriggersAtaque();
     }
 
     void LogicaEspera()
@@ -639,14 +640,18 @@ BuscarRadar:
         if (ataqueTriggerPendiente || estadoActual == Estado.Ataque)
             return;
 
+        if (laserYaDisparado)
+        {
+            estadoActual = Estado.Persecucion;
+            timer = 0f;
+            return;
+        }
+
         estadoActual = Estado.Reaccion;
         timer = tiempoReaccion;
-        if (!laserYaDisparado)
-        {
-            if (animator != null && hashReaccionar != 0)
-                animator.SetTrigger(hashReaccionar);
-            laserYaDisparado = true;
-        }
+        if (animator != null && hashReaccionar != 0)
+            animator.SetTrigger(hashReaccionar);
+        laserYaDisparado = true;
     }
 
     void IniciarAtaque()
@@ -667,20 +672,28 @@ BuscarRadar:
         }
     }
 
-    void IniciarAtaquePorTrigger(Collider2D objetivo)
+    void RegistrarObjetivoAtaque(Collider2D objetivo)
     {
         if (objetivo == null) return;
         if (ataqueTriggerPendiente) return;
-        if (cooldownGolpeContacto > 0f) return;
 
         objetivoColliderAtaque = objetivo;
         objetivoTransformAtaque = objetivo.transform;
         objetivoRbAtaque = objetivo.attachedRigidbody;
         objetivoHealthAtaque = objetivo.GetComponent<PlayerHealth>();
         ataqueTriggerPendiente = true;
-        IniciarAtaque();
-        esperandoFinAnimAtaque = true;
-        entroEnEstadoAnimAtaque = false;
+    }
+
+    void IniciarAtaquePorTrigger(Collider2D objetivo)
+    {
+        if (objetivo == null) return;
+        if (ataqueTriggerPendiente) return;
+        if (cooldownGolpeContacto > 0f) return;
+
+        RegistrarObjetivoAtaque(objetivo);
+
+        if (estadoActual != Estado.Ataque)
+            IniciarAtaque();
     }
 
     void ResolverAtaquePorTriggerSiCorresponde()
@@ -700,11 +713,32 @@ BuscarRadar:
         objetivoRbAtaque = null;
         objetivoHealthAtaque = null;
         ataqueNoInterrumpible = false;
-        timerAtaqueNoInterrumpible = 0f;
-        ForzarSalidaAnimacionAtaque();
+    }
+
+    void CancelarAtaqueActual()
+    {
+        esperandoFinAnimAtaque = false;
+        entroEnEstadoAnimAtaque = false;
+        ataqueNoInterrumpible = false;
+        ataqueTriggerPendiente = false;
+        objetivoColliderAtaque = null;
+        objetivoTransformAtaque = null;
+        objetivoRbAtaque = null;
+        objetivoHealthAtaque = null;
+        ResetearTriggersAtaque();
     }
 
     void ForzarSalidaAnimacionAtaque()
+    {
+        if (animator == null) return;
+
+        ResetearTriggersAtaque();
+
+        if (!string.IsNullOrEmpty(nombreEstadoAnimIdle))
+            animator.CrossFadeInFixedTime(nombreEstadoAnimIdle, 0.05f, 0);
+    }
+
+    void ResetearTriggersAtaque()
     {
         if (animator == null) return;
 
@@ -713,9 +747,6 @@ BuscarRadar:
         if (hashReaccionar != 0)
             animator.ResetTrigger(hashReaccionar);
         SetCaminando(false);
-
-        if (!string.IsNullOrEmpty(nombreEstadoAnimIdle))
-            animator.CrossFadeInFixedTime(nombreEstadoAnimIdle, 0.05f, 0);
     }
 
     bool AnimacionAtaqueTerminada()
@@ -723,8 +754,19 @@ BuscarRadar:
         if (animator == null || string.IsNullOrEmpty(nombreEstadoAnimAtaque))
             return true;
 
+        int hashEstadoAtaque = Animator.StringToHash(nombreEstadoAnimAtaque);
         AnimatorStateInfo estado = animator.GetCurrentAnimatorStateInfo(0);
-        bool estaEnAtaque = estado.IsName(nombreEstadoAnimAtaque);
+        bool estaEnAtaque = EsEstadoAnimAtaque(estado, hashEstadoAtaque);
+        if (!estaEnAtaque && animator.IsInTransition(0))
+        {
+            AnimatorStateInfo siguienteEstado = animator.GetNextAnimatorStateInfo(0);
+            if (EsEstadoAnimAtaque(siguienteEstado, hashEstadoAtaque))
+            {
+                entroEnEstadoAnimAtaque = true;
+                return false;
+            }
+        }
+
         if (estaEnAtaque)
         {
             entroEnEstadoAnimAtaque = true;
@@ -743,6 +785,13 @@ BuscarRadar:
         }
 
         return false;
+    }
+
+    bool EsEstadoAnimAtaque(AnimatorStateInfo estado, int hashEstadoAtaque)
+    {
+        return estado.IsName(nombreEstadoAnimAtaque)
+            || estado.shortNameHash == hashEstadoAtaque
+            || estado.fullPathHash == hashEstadoAtaque;
     }
 
     float DireccionEsquiveLateralAleatoria()
@@ -842,10 +891,9 @@ BuscarRadar:
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        if (ataqueNoInterrumpible) return;
-
         if (estadoActual == Estado.Patrulla && col.gameObject.CompareTag("Pared"))
         {
+            if (ataqueNoInterrumpible) return;
             Girar();
             IniciarPatrulla();
         }
@@ -857,6 +905,7 @@ BuscarRadar:
 
         if (saltaronEncima)
         {
+            CancelarAtaqueActual();
             TakeDamage(1, true);
 
             float ladoX = col.transform.position.x > transform.position.x ? 1f : -1f;
@@ -867,7 +916,11 @@ BuscarRadar:
             
             dirRetrocesoActual = DireccionEsquiveLateralAleatoria();
             timer = tiempoRetroceso;
+            cooldownGolpeContacto = tiempoEntreGolpesContacto;
+            return;
         }
+
+        if (ataqueNoInterrumpible) return;
     }
 
     bool EsGolpeEnCabeza(Collision2D col)
@@ -917,10 +970,27 @@ BuscarRadar:
         cooldownGolpeContacto = tiempoEntreGolpesContacto;
     }
 
+    void IntentarRegistrarObjetivoDuranteAtaque(Collider2D col)
+    {
+        if (estadoActual != Estado.Ataque) return;
+        if (ataqueTriggerPendiente) return;
+        if (cooldownGolpeContacto > 0f) return;
+
+        if (damageCollider == null)
+            AutoAsignarColliders();
+
+        if (TocaHitboxDanio(col))
+            RegistrarObjetivoAtaque(col);
+    }
+
     void OnTriggerEnter2D(Collider2D col)
     {
         if (!col.CompareTag("Player")) return;
-        if (ataqueNoInterrumpible) return;
+        if (ataqueNoInterrumpible)
+        {
+            IntentarRegistrarObjetivoDuranteAtaque(col);
+            return;
+        }
 
         if (damageCollider == null)
             AutoAsignarColliders();
@@ -942,7 +1012,11 @@ BuscarRadar:
     void OnTriggerStay2D(Collider2D col)
     {
         if (!col.CompareTag("Player")) return;
-        if (ataqueNoInterrumpible) return;
+        if (ataqueNoInterrumpible)
+        {
+            IntentarRegistrarObjetivoDuranteAtaque(col);
+            return;
+        }
         if (cooldownGolpeContacto > 0f) return;
         if (damageCollider == null)
             AutoAsignarColliders();

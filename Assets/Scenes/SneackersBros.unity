@@ -5647,42 +5647,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91bbbb243afdfa4093da35aa7502004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JefeMario
-  velocidadPatrulla: 2
-  velocidadPersecucion: 4
-  velocidadRetroceso: 3
-  distanciaAtaque: 1.5
-  distanciaDeteccionCercana: 1
-  maxHealth: 50
-  tiempoInvencible: 0
-  knockbackSaltoX: 14.11
-  knockbackSaltoY: 6.69
-  knockbackGolpeX: 8.78
-  knockbackGolpeY: 2.98
-  duracionKnockback: 1.02
-  giroSaltoCabeza: 360
-  tiempoPausaTrasImpacto: 0.2
-  multiplicadorRetrocesoGolpe: 3
-  tiempoEntreGolpesContacto: 0
-  saltoJugadorMinY: 0.2
-  distanciaEvasionSalto: 3.56
-  velocidadEvasionSalto: 1.59
-  duracionEvasionSalto: 0.74
-  multiplicadorEvasionHaciaAtras: 1.35
-  tiempoReaccion: 0.2
-  tiempoAtaque: 0
-  tiempoEspera: 0.1
-  tiempoRetroceso: 1
-  tiempoPatrullaMin: 2
-  tiempoPatrullaMax: 5
-  nombreEstadoAnimAtaque: Attack
-  nombreEstadoAnimIdle: idle
-  duracionAtaqueNoInterrumpible: 0.1
-  mascaraTerreno:
-    serializedVersion: 2
-    m_Bits: 0
-  distanciaChequeoPared: 0.7
-  avanceChequeoSuelo: 0.55
-  distanciaChequeoSuelo: 1.2
   bodyCollider: {fileID: 1725201961}
   damageCollider: {fileID: 225030758}
   radarCollider: {fileID: 1725201955}
@@ -5692,14 +5656,9 @@ MonoBehaviour:
   damageSizePorDefecto: {x: 1.2, y: 1.6}
   wallRadar: {fileID: 291715275}
   tilemapObjetivo: {fileID: 1405613771}
-  ignorarParedEnPersecucion: 1
-  velocidadBusqueda: 3
-  distanciaLlegadaBusqueda: 0.4
-  tiempoMaxBusqueda: 20
   paramCaminando: Caminando
   triggerAtacar: Atacar
   triggerReaccionar: Reacionar
-  distanciaAtaqueSaltoJugador: 1.25
 --- !u!50 &1725201959
 Rigidbody2D:
   serializedVersion: 5
