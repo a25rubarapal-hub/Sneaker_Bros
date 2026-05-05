@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1d362c28387998b4f8a406d8c45857e8
+guid: 10f1ab54396c792e1af607faf0d502d0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6222488314298270729
-    second: Evil_Pozole_0
+      213: -3906121861619391159
+    second: bandera_evil_Pozole_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Evil_Pozole_0
+      name: bandera_evil_Pozole_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 8
         y: 0
-        width: 47
-        height: 48
+        width: 20
+        height: 27
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 90484c85728ba5650800000000000000
-      internalID: 6222488314298270729
+      spriteID: 945e9c4ccdaaac9c0800000000000000
+      internalID: -3906121861619391159
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: fe18448f645d20a09817ec5ff6c421af
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Evil_Pozole_0: 6222488314298270729
+      bandera_evil_Pozole_0: -3906121861619391159
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

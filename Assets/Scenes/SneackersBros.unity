@@ -1631,7 +1631,7 @@ Transform:
   m_GameObject: {fileID: 682299832}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 193.9, y: 2.9, z: 0}
+  m_LocalPosition: {x: -10.9, y: -2.78, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -175422,18 +175422,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91bbbb243afdfa4093da35aa7502004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JefeMario
-  bodyCollider: {fileID: 1725201961}
-  damageCollider: {fileID: 225030758}
-  radarCollider: {fileID: 1725201955}
-  radarOffsetPorDefecto: {x: 0, y: 0.2}
-  radarSizePorDefecto: {x: 4.5, y: 2.4}
-  damageOffsetPorDefecto: {x: 0.7, y: 0.2}
-  damageSizePorDefecto: {x: 1.2, y: 1.6}
-  wallRadar: {fileID: 291715275}
-  tilemapObjetivo: {fileID: 1405613771}
-  paramCaminando: Caminando
+  paramCaminar: Caminar
   triggerAtacar: Atacar
+  triggerRecibir: Recibir
   triggerReaccionar: Reacionar
+  paramMuerto: Muerto
+  velocidadMovimiento: 3
+  tagPared: Pared
+  duracionAtaque: 0.8
+  duracionRecibir: 0.5
+  duracionReaccionar: 0.3
+  duracionCaminar: 3
+  duracionIdle: 1
 --- !u!50 &1725201959
 Rigidbody2D:
   serializedVersion: 5
