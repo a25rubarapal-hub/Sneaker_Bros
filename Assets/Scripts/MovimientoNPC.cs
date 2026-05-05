@@ -12,6 +12,10 @@ public class MovimientoNPC : MonoBehaviour
 
     public PlayerScore playerScore;
 
+    [Header("Sonido")]
+    public AudioClip sonidoGolpe;
+    [Range(0f, 1f)] public float volumen = 1f;
+
     private int currentHealth;
     private bool movingRight = true;
 
@@ -68,10 +72,14 @@ public class MovimientoNPC : MonoBehaviour
 
     void Die()
     {
-        // DAR PUNTOS AL JUGADOR
         if (playerScore != null)
         {
             playerScore.SumarPuntos(500);
+        }
+
+        if (sonidoGolpe != null)
+        {
+            AudioSource.PlayClipAtPoint(sonidoGolpe, transform.position, volumen);
         }
 
         Destroy(gameObject);

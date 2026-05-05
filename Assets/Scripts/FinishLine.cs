@@ -2,8 +2,13 @@
 
 public class FinishLine : MonoBehaviour
 {
-    public GameObject scoreboardScreen; // Panel del scoreboard
-    public PlayerScore playerScore;     // Referencia al PlayerScore
+    public GameObject scoreboardScreen;
+    public PlayerScore playerScore;
+
+    [Header("Sonido")]
+    public AudioClip sonidoVictoria;
+    [Range(0f, 1f)] public float volumen = 1f;
+    public AudioSource musicaFondo;
 
     private bool triggered = false;
 
@@ -15,14 +20,30 @@ public class FinishLine : MonoBehaviour
         {
             triggered = true;
 
+            if (musicaFondo != null)
+            {
+                musicaFondo.ignoreListenerPause = false;
+                musicaFondo.Stop();
+            }
+
+            // Suena el audio de victoria
+            if (sonidoVictoria != null)
+            {
+                AudioSource audioTemp = gameObject.AddComponent<AudioSource>();
+                audioTemp.clip = sonidoVictoria;
+                audioTemp.volume = volumen;
+                audioTemp.spatialBlend = 0f;
+                audioTemp.ignoreListenerPause = true;
+                audioTemp.Play();
+                Destroy(audioTemp, sonidoVictoria.length);
+            }
+
             // ⏸ Pausar el juego
             Time.timeScale = 0f;
 
-            // 📊 Activar scoreboard
             if (scoreboardScreen != null)
                 scoreboardScreen.SetActive(true);
 
-            // 🧠 Pasar puntuación al UI
             ScoreboardUI ui = scoreboardScreen.GetComponentInChildren<ScoreboardUI>();
 
             if (ui != null && playerScore != null)
