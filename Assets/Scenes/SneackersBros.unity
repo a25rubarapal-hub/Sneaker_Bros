@@ -3529,6 +3529,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ScoreboardUI
   puntuacionText: {fileID: 1641333236}
   nombreInput: {fileID: 1400328840}
+  gameTimer: {fileID: 732600085}
 --- !u!1 &971854156
 GameObject:
   m_ObjectHideFlags: 0
