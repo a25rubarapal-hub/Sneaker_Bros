@@ -284,9 +284,9 @@ TextureImporter:
       name: Skeleton Walk_6
       rect:
         serializedVersion: 2
-        x: 130
+        x: 132
         y: 0
-        width: 24
+        width: 22
         height: 33
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -306,9 +306,9 @@ TextureImporter:
       name: Skeleton Walk_7
       rect:
         serializedVersion: 2
-        x: 152
+        x: 154
         y: 0
-        width: 24
+        width: 22
         height: 33
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -328,9 +328,9 @@ TextureImporter:
       name: Skeleton Walk_8
       rect:
         serializedVersion: 2
-        x: 175
+        x: 176
         y: 0
-        width: 23
+        width: 22
         height: 33
       alignment: 0
       pivot: {x: 0.5, y: 0.5}

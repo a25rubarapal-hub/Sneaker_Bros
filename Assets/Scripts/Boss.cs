@@ -25,15 +25,15 @@ public class Boss : MonoBehaviour
 
     [Header("Duración de Estados")]
     [SerializeField] private float duracionAtaque = 0.8f;
-    [SerializeField] private float duracionRecibir = 0.5f;
+    [SerializeField] private float duracionRecibir = 0.3f;
     [SerializeField] private float duracionReaccionar = 0.3f;
     [SerializeField] private float duracionIdle = 1f;
 
     [Header("Ataque y Daño")]
     [SerializeField] private int danioAtaque = 1;
-    [SerializeField] private Collider2D hitboxDanio;
+    [SerializeField] private Collider2D hitboxDanio; // Hitbox que hace daño
+    [SerializeField] private Collider2D radarAtaque; // <- NUEVA: Hitbox que detecta cuándo atacar
     [SerializeField] private float cooldownDanio = 2f;
-    [SerializeField] private float distanciaParaAtacar = 1.5f;
 
     [Header("Radares")]
     [SerializeField] private string tagJugador = "Player";
@@ -64,10 +64,8 @@ public class Boss : MonoBehaviour
 
         bossCollider.isTrigger = false;
 
-        if (hitboxDanio != null)
-        {
-            hitboxDanio.isTrigger = true;
-        }
+        if (hitboxDanio != null) hitboxDanio.isTrigger = true;
+        if (radarAtaque != null) radarAtaque.isTrigger = true; // Nos aseguramos de que sea trigger
 
         CambiarEstado(Estado.Walk);
     }
@@ -80,7 +78,7 @@ public class Boss : MonoBehaviour
         if (timerCooldownDanio > 0f) timerCooldownDanio -= Time.deltaTime;
 
         DetectarParedes();
-        DetectarSiPuedeEmpezarAtaque();
+        DetectarSiPuedeEmpezarAtaque(); // Ahora usa el nuevo Radar
         ActualizarLogicaEstado();
 
         AplicarDanioContinuo();
@@ -96,7 +94,7 @@ public class Boss : MonoBehaviour
         if (hitboxDanio == null || timerCooldownDanio > 0f) return;
 
         List<Collider2D> collidersEnRango = new List<Collider2D>();
-        hitboxDanio.Overlap(new ContactFilter2D().NoFilter(), collidersEnRango);
+        hitboxDanio.Overlap(ContactFilter2D.noFilter, collidersEnRango);
 
         foreach (Collider2D col in collidersEnRango)
         {
@@ -115,18 +113,30 @@ public class Boss : MonoBehaviour
     }
 
     // ─────────────────────────────────────────────────────────
-    // DETECTAR PARA INICIAR ANIMACIÓN
+    // DETECTAR PARA INICIAR ANIMACIÓN (NUEVO SISTEMA POR HITBOX)
     // ─────────────────────────────────────────────────────────
     void DetectarSiPuedeEmpezarAtaque()
     {
-        if (transformJugador == null)
+        if (radarAtaque == null)
         {
             jugadorCercaParaAtacar = false;
             return;
         }
 
-        float distancia = Vector2.Distance(transform.position, transformJugador.position);
-        jugadorCercaParaAtacar = (distancia <= distanciaParaAtacar);
+        // Escaneamos quién está dentro de la Hitbox de Detección (Radar)
+        List<Collider2D> collidersEnRango = new List<Collider2D>();
+        radarAtaque.Overlap(ContactFilter2D.noFilter, collidersEnRango);
+
+        jugadorCercaParaAtacar = false; // Por defecto asumimos que no está
+
+        foreach (Collider2D col in collidersEnRango)
+        {
+            if (col.CompareTag(tagJugador))
+            {
+                jugadorCercaParaAtacar = true; // ¡Lo encontramos!
+                break;
+            }
+        }
     }
 
     // ─────────────────────────────────────────────────────────
@@ -137,12 +147,10 @@ public class Boss : MonoBehaviour
         float dir = movingRight ? 1f : -1f;
         Vector2 origen = transform.position;
         RaycastHit2D hit = Physics2D.Raycast(origen, Vector2.right * dir, distanciaRayoPared);
-        Debug.DrawRay(origen, Vector2.right * dir * distanciaRayoPared,
-                      (hit.collider != null && hit.collider.CompareTag(tagPared)) ? Color.red : Color.green);
     }
 
     // ─────────────────────────────────────────────────────────
-    // RADAR DEL JUGADOR
+    // RADAR DEL JUGADOR (Para la persecución general)
     // ─────────────────────────────────────────────────────────
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -158,14 +166,13 @@ public class Boss : MonoBehaviour
         if (collision.CompareTag(tagJugador))
         {
             persiguiendoJugador = false;
-            jugadorCercaParaAtacar = false;
             transformJugador = null;
         }
     }
 
     // ─────────────────────────────────────────────────────────
     // MOVIMIENTO
-    // ──────────────────────────────────────────���──────────────
+    // ─────────────────────────────────────────────────────────
     void Mover()
     {
         if (persiguiendoJugador && transformJugador != null)
@@ -193,7 +200,6 @@ public class Boss : MonoBehaviour
         if (estadoActual == Estado.Dead) return;
 
         vidaActual -= 1;
-        Debug.Log($"Boss golpeado. Vida: {vidaActual}/{vidaMaxima}");
 
         if (vidaActual <= 0)
         {
@@ -202,10 +208,7 @@ public class Boss : MonoBehaviour
         }
         else
         {
-            // Force reset del estado para asegurar que la animación se dispare
-            estadoActual = Estado.Idle;
             CambiarEstado(Estado.Hit);
-            Debug.Log($"[Boss] Animación de daño disparada. Timer: {timerEstado}");
         }
     }
 
@@ -240,7 +243,7 @@ public class Boss : MonoBehaviour
                 {
                     if (jugadorCercaParaAtacar)
                     {
-                        SetTrigger(triggerAtacar);
+                        animator.Play("Attack", -1, 0f);
                         timerEstado = duracionAtaque;
                     }
                     else
@@ -251,21 +254,6 @@ public class Boss : MonoBehaviour
                 break;
 
             case Estado.Hit:
-                // El estado Hit se mantiene hasta que el timer se agote
-                if (timerEstado <= 0f)
-                {
-                    // Si el jugador sigue cerca, vuelve a atacar; si no, vuelve a caminar
-                    if (jugadorCercaParaAtacar)
-                    {
-                        CambiarEstado(Estado.Walk);
-                    }
-                    else
-                    {
-                        CambiarEstado(Estado.Walk);
-                    }
-                }
-                break;
-
             case Estado.React:
                 if (timerEstado <= 0f)
                 {
@@ -300,7 +288,7 @@ public class Boss : MonoBehaviour
 
             case Estado.Attack:
                 rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
-                SetTrigger(triggerAtacar);
+                animator.Play("Attack");
                 timerEstado = duracionAtaque;
                 break;
 
@@ -308,7 +296,6 @@ public class Boss : MonoBehaviour
                 rb.constraints = RigidbodyConstraints2D.FreezeRotation;
                 SetTrigger(triggerRecibir);
                 timerEstado = duracionRecibir;
-                Debug.Log($"[Boss] Estado Hit activado. Timer establecido a: {timerEstado}");
                 break;
 
             case Estado.React:
@@ -326,17 +313,13 @@ public class Boss : MonoBehaviour
     {
         estadoActual = Estado.Dead;
 
-        // 1. Invocamos al Clon de Muerte
         if (prefabMuerte != null)
         {
             GameObject clonMuerte = Instantiate(prefabMuerte, transform.position, transform.rotation);
             clonMuerte.transform.localScale = transform.localScale;
-
-            // Fuerza al clon a mostrarse sin importar cómo estaba el original
             clonMuerte.SetActive(true);
         }
 
-        // 2. Destruimos al Boss original
         Destroy(gameObject);
     }
 

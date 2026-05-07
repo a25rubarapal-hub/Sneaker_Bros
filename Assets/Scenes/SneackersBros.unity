@@ -176991,7 +176991,7 @@ MonoBehaviour:
   vidaMaxima: 3
   prefabMuerte: {fileID: 1090063494}
   velocidadMovimiento: 3
-  duracionAtaque: 0.8
+  duracionAtaque: 2.5
   duracionRecibir: 0.5
   duracionReaccionar: 0.3
   duracionIdle: 1
@@ -177261,6 +177261,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeadSensor
   boss: {fileID: 1725201958}
+  bossAnimator: {fileID: 1725201950}
+  fuerzaRebote: 9
 --- !u!1 &1779962497
 GameObject:
   m_ObjectHideFlags: 0
