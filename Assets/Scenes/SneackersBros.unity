@@ -277,6 +277,38 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3882102}
   m_CullTransparentMesh: 1
+--- !u!1 &74249032
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 74249033}
+  m_Layer: 0
+  m_Name: Enemies
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &74249033
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 74249032}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.74248, y: 3.15933, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 922471853}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &225030757
 GameObject:
   m_ObjectHideFlags: 0
@@ -2220,10 +2252,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f0d25554b78b974eab22808fdd03881, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameTimer
-  tiempoInicial: 300
+  tiempoInicial: 500
   tiempoActual: 0
   timerActivo: 1
   timerText: {fileID: 971854157}
+  playerHealth: {fileID: 682299842}
 --- !u!224 &732600086
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2899,12 +2932,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 922471850}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.9, y: -3.62, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -8.842481, y: -6.77933, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 74249033}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &922471854
 MonoBehaviour:
@@ -734965,7 +734998,6 @@ SceneRoots:
   - {fileID: 1533091658}
   - {fileID: 682299839}
   - {fileID: 1047466757}
-  - {fileID: 922471853}
   - {fileID: 694716534}
   - {fileID: 1531322986}
   - {fileID: 271896340}
@@ -734978,3 +735010,4 @@ SceneRoots:
   - {fileID: 732600086}
   - {fileID: 1075521864}
   - {fileID: 1647978595}
+  - {fileID: 74249033}

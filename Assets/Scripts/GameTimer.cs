@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using TMPro;
 
 public class GameTimer : MonoBehaviour
@@ -9,6 +9,8 @@ public class GameTimer : MonoBehaviour
     public bool timerActivo = true;
 
     public TMP_Text timerText;
+
+    public PlayerHealth playerHealth;
 
     void Start()
     {
@@ -26,8 +28,13 @@ public class GameTimer : MonoBehaviour
             tiempoActual = 0;
             timerActivo = false;
 
-            Debug.Log("Se acabó el tiempo");
-            // aquí luego puedes llamar a Game Over o FinishLine
+            Debug.Log("Se acabÃ³ el tiempo");
+
+            // ðŸ’€ matar jugador
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(playerHealth.maxHealth);
+            }
         }
 
         ActualizarUI();
