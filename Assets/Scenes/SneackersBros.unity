@@ -422,7 +422,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0036010742, y: -0.5849333}
+  m_Offset: {x: -1.1376953, y: -0.29379588}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -432,7 +432,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.3817444, y: 2.1926298}
+  m_Size: {x: 3.7923584, y: 2.7749047}
   m_EdgeRadius: 0
 --- !u!4 &225030759
 Transform:
@@ -1904,6 +1904,9 @@ MonoBehaviour:
   maxHealth: 3
   health: 0
   invincibleTime: 1
+  "fuerzaDa\xF1oX": 15
+  "fuerzaDa\xF1oY": 3
+  "tiempoBloqueoDa\xF1o": 0.3
   gameOverScreen: {fileID: 724764935}
   playerScore: {fileID: 682299843}
   sonidoMuerte: {fileID: 8300000, guid: 3935197dfb440a7448ebd5a6952a62f1, type: 3}
@@ -176997,8 +177000,8 @@ MonoBehaviour:
   duracionIdle: 1
   danioAtaque: 1
   hitboxDanio: {fileID: 1530261632}
+  radarAtaque: {fileID: 225030758}
   cooldownDanio: 2
-  distanciaParaAtacar: 1.5
   tagJugador: Player
   tagPared: Pared
   distanciaRayoPared: 1
@@ -177262,7 +177265,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HeadSensor
   boss: {fileID: 1725201958}
   bossAnimator: {fileID: 1725201950}
-  fuerzaRebote: 9
+  fuerzaReboteVertical: 10
+  fuerzaReboteHorizontal: 3
 --- !u!1 &1779962497
 GameObject:
   m_ObjectHideFlags: 0
