@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections.Generic; // Necesario para usar List<>
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(BoxCollider2D))]
@@ -12,26 +12,28 @@ public class Boss : MonoBehaviour
     [SerializeField] private string paramCaminar = "Caminar";
     [SerializeField] private string triggerAtacar = "Atacar";
     [SerializeField] private string triggerIdle = "Idle";
-    [SerializeField] private string triggerRecibir = "Recibir";
-    [SerializeField] private string triggerReaccionar = "Reaccionar";
+    [SerializeField] private string triggerRecibir = "RDaño";
+    [SerializeField] private string triggerReaccionar = "Reacionar";
 
-    [Header("Vida")]
+    [Header("Vida y Muerte")]
     [SerializeField] private int vidaMaxima = 50;
+    [SerializeField] private GameObject prefabMuerte;
     private int vidaActual;
 
     [Header("Movimiento")]
     [SerializeField] private float velocidadMovimiento = 3f;
 
     [Header("Duración de Estados")]
-    [SerializeField] private float duracionAtaque = 0.8f; // IMPORTANTE: Debe durar lo mismo que tu animación de ataque
-    [SerializeField] private float duracionRecibir = 0.3f;
+    [SerializeField] private float duracionAtaque = 0.8f;
+    [SerializeField] private float duracionRecibir = 0.5f;
     [SerializeField] private float duracionReaccionar = 0.3f;
     [SerializeField] private float duracionIdle = 1f;
 
-    [Header("Ataque")]
+    [Header("Ataque y Daño")]
     [SerializeField] private int danioAtaque = 1;
-    [SerializeField] private float distanciaDeteccionAtaque = 1.5f;
-    [SerializeField] private Collider2D hitboxAtaque; // <- Aquí asignas la Hitbox hija en el Inspector
+    [SerializeField] private Collider2D hitboxDanio;
+    [SerializeField] private float cooldownDanio = 2f;
+    [SerializeField] private float distanciaParaAtacar = 1.5f;
 
     [Header("Radares")]
     [SerializeField] private string tagJugador = "Player";
@@ -41,15 +43,16 @@ public class Boss : MonoBehaviour
     // ── Referencias ────────────────────────────────────────
     private Animator animator;
     private Rigidbody2D rb;
-    private BoxCollider2D bossCollider; // Este es el collider principal (físico)
+    private BoxCollider2D bossCollider;
     private float timerEstado = 0f;
+    private float timerCooldownDanio = 0f;
     private bool movingRight = true;
     private bool caminandoActualmente = false;
 
     // ── Estado interno Radares ─────────────────────────────
     private Transform transformJugador;
     private bool persiguiendoJugador = false;
-    private bool jugadorEnRangoAtaque = false;
+    private bool jugadorCercaParaAtacar = false;
 
     // ─────────────────────────────────────────────────────────
     void Start()
@@ -59,12 +62,11 @@ public class Boss : MonoBehaviour
         bossCollider = GetComponent<BoxCollider2D>();
         vidaActual = vidaMaxima;
 
-        // CORRECCIÓN: Evita que el boss se caiga al vacío.
         bossCollider.isTrigger = false;
 
-        if (hitboxAtaque != null)
+        if (hitboxDanio != null)
         {
-            hitboxAtaque.isTrigger = true;
+            hitboxDanio.isTrigger = true;
         }
 
         CambiarEstado(Estado.Walk);
@@ -75,56 +77,56 @@ public class Boss : MonoBehaviour
         if (estadoActual == Estado.Dead) return;
 
         if (timerEstado > 0f) timerEstado -= Time.deltaTime;
+        if (timerCooldownDanio > 0f) timerCooldownDanio -= Time.deltaTime;
 
         DetectarParedes();
+        DetectarSiPuedeEmpezarAtaque();
         ActualizarLogicaEstado();
-        DetectarJugadorEnRangoAtaque();
+
+        AplicarDanioContinuo();
 
         if (caminandoActualmente) Mover();
     }
 
     // ─────────────────────────────────────────────────────────
-    // DETECTAR JUGADOR EN RANGO DE ATAQUE
+    // SISTEMA DE DAÑO CONTINUO
     // ─────────────────────────────────────────────────────────
-
-    void DetectarJugadorEnRangoAtaque()
+    void AplicarDanioContinuo()
     {
-        if (hitboxAtaque == null || transformJugador == null)
-        {
-            jugadorEnRangoAtaque = false;
-            return;
-        }
+        if (hitboxDanio == null || timerCooldownDanio > 0f) return;
 
         List<Collider2D> collidersEnRango = new List<Collider2D>();
-        hitboxAtaque.Overlap(new ContactFilter2D().NoFilter(), collidersEnRango);
-
-        jugadorEnRangoAtaque = collidersEnRango.Exists(col => col.CompareTag(tagJugador));
-    }
-
-    // ─────────────────────────────────────────────────────────
-    // APLICAR DAÑO (Justo al terminar la animación)
-    // ─────────────────────────────────────────────────────────
-
-    void AplicarDanioFinalAnimacion()
-    {
-        if (hitboxAtaque == null) return;
-
-        List<Collider2D> collidersEnRango = new List<Collider2D>();
-        hitboxAtaque.Overlap(new ContactFilter2D().NoFilter(), collidersEnRango);
+        hitboxDanio.Overlap(new ContactFilter2D().NoFilter(), collidersEnRango);
 
         foreach (Collider2D col in collidersEnRango)
         {
             if (col.CompareTag(tagJugador))
             {
-                // Mismo sistema que tienes en MovimientoNPC.cs
                 PlayerHealth player = col.GetComponent<PlayerHealth>();
                 if (player != null)
                 {
                     player.TakeDamage(danioAtaque);
-                    Debug.Log($"[Boss] ¡DAÑO APLICADO! {danioAtaque} al jugador al terminar el ataque.");
+                    timerCooldownDanio = cooldownDanio;
+                    Debug.Log($"[Boss] ¡Te di un golpe! Esperando {cooldownDanio} segundos para el próximo...");
+                    break;
                 }
             }
         }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // DETECTAR PARA INICIAR ANIMACIÓN
+    // ─────────────────────────────────────────────────────────
+    void DetectarSiPuedeEmpezarAtaque()
+    {
+        if (transformJugador == null)
+        {
+            jugadorCercaParaAtacar = false;
+            return;
+        }
+
+        float distancia = Vector2.Distance(transform.position, transformJugador.position);
+        jugadorCercaParaAtacar = (distancia <= distanciaParaAtacar);
     }
 
     // ─────────────────────────────────────────────────────────
@@ -140,7 +142,7 @@ public class Boss : MonoBehaviour
     }
 
     // ─────────────────────────────────────────────────────────
-    // RADAR DEL JUGADOR — Necesita un segundo Collider "Is Trigger" en Unity
+    // RADAR DEL JUGADOR
     // ─────────────────────────────────────────────────────────
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -148,7 +150,6 @@ public class Boss : MonoBehaviour
         {
             transformJugador = collision.transform;
             persiguiendoJugador = true;
-            Debug.Log("[Boss] Jugador detectado");
         }
     }
 
@@ -157,15 +158,14 @@ public class Boss : MonoBehaviour
         if (collision.CompareTag(tagJugador))
         {
             persiguiendoJugador = false;
-            jugadorEnRangoAtaque = false;
+            jugadorCercaParaAtacar = false;
             transformJugador = null;
-            Debug.Log("[Boss] Jugador salió del rango");
         }
     }
 
     // ─────────────────────────────────────────────────────────
     // MOVIMIENTO
-    // ─────────────────────────────────────────────────────────
+    // ──────────────────────────────────────────���──────────────
     void Mover()
     {
         if (persiguiendoJugador && transformJugador != null)
@@ -202,7 +202,10 @@ public class Boss : MonoBehaviour
         }
         else
         {
+            // Force reset del estado para asegurar que la animación se dispare
+            estadoActual = Estado.Idle;
             CambiarEstado(Estado.Hit);
+            Debug.Log($"[Boss] Animación de daño disparada. Timer: {timerEstado}");
         }
     }
 
@@ -221,7 +224,7 @@ public class Boss : MonoBehaviour
                 break;
 
             case Estado.Walk:
-                if (jugadorEnRangoAtaque)
+                if (jugadorCercaParaAtacar)
                 {
                     CambiarEstado(Estado.Attack);
                     break;
@@ -233,28 +236,36 @@ public class Boss : MonoBehaviour
                 break;
 
             case Estado.Attack:
-                // Cuando el temporizador llega a 0, significa que la animación de ataque terminó
                 if (timerEstado <= 0f)
                 {
-                    // 1. Verificamos si el jugador sigue ahí para aplicarle el daño
-                    AplicarDanioFinalAnimacion();
-
-                    // 2. Volvemos a detectar si el jugador sigue en rango para atacar de nuevo
-                    DetectarJugadorEnRangoAtaque();
-
-                    if (jugadorEnRangoAtaque)
+                    if (jugadorCercaParaAtacar)
                     {
                         SetTrigger(triggerAtacar);
-                        timerEstado = duracionAtaque; // Reiniciamos el tiempo para el nuevo ataque
+                        timerEstado = duracionAtaque;
                     }
                     else
                     {
-                        CambiarEstado(Estado.Idle); // Si se alejó, volvemos a Idle
+                        CambiarEstado(Estado.Idle);
                     }
                 }
                 break;
 
             case Estado.Hit:
+                // El estado Hit se mantiene hasta que el timer se agote
+                if (timerEstado <= 0f)
+                {
+                    // Si el jugador sigue cerca, vuelve a atacar; si no, vuelve a caminar
+                    if (jugadorCercaParaAtacar)
+                    {
+                        CambiarEstado(Estado.Walk);
+                    }
+                    else
+                    {
+                        CambiarEstado(Estado.Walk);
+                    }
+                }
+                break;
+
             case Estado.React:
                 if (timerEstado <= 0f)
                 {
@@ -275,38 +286,38 @@ public class Boss : MonoBehaviour
         switch (estadoActual)
         {
             case Estado.Idle:
+                rb.constraints = RigidbodyConstraints2D.FreezeRotation;
                 SetTrigger(triggerIdle);
                 timerEstado = duracionIdle;
-                Debug.Log("[Boss] Estado: IDLE");
                 break;
 
             case Estado.Walk:
+                rb.constraints = RigidbodyConstraints2D.FreezeRotation;
                 caminandoActualmente = true;
                 SetBool(paramCaminar, true);
                 timerEstado = Random.Range(2f, 4f);
-                Debug.Log("[Boss] Estado: WALK");
                 break;
 
             case Estado.Attack:
+                rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
                 SetTrigger(triggerAtacar);
-                timerEstado = duracionAtaque; // Arranca el contador que dura lo que la animación
-                Debug.Log("[Boss] Estado: ATTACK");
+                timerEstado = duracionAtaque;
                 break;
 
             case Estado.Hit:
+                rb.constraints = RigidbodyConstraints2D.FreezeRotation;
                 SetTrigger(triggerRecibir);
                 timerEstado = duracionRecibir;
-                Debug.Log("[Boss] Estado: HIT");
+                Debug.Log($"[Boss] Estado Hit activado. Timer establecido a: {timerEstado}");
                 break;
 
             case Estado.React:
+                rb.constraints = RigidbodyConstraints2D.FreezeRotation;
                 SetTrigger(triggerReaccionar);
                 timerEstado = duracionReaccionar;
-                Debug.Log("[Boss] Estado: REACT");
                 break;
 
             case Estado.Dead:
-                Debug.Log("[Boss] Estado: DEAD");
                 break;
         }
     }
@@ -314,19 +325,29 @@ public class Boss : MonoBehaviour
     public void Morir()
     {
         estadoActual = Estado.Dead;
+
+        // 1. Invocamos al Clon de Muerte
+        if (prefabMuerte != null)
+        {
+            GameObject clonMuerte = Instantiate(prefabMuerte, transform.position, transform.rotation);
+            clonMuerte.transform.localScale = transform.localScale;
+
+            // Fuerza al clon a mostrarse sin importar cómo estaba el original
+            clonMuerte.SetActive(true);
+        }
+
+        // 2. Destruimos al Boss original
         Destroy(gameObject);
     }
 
     void SetBool(string param, bool value)
     {
-        if (animator)
-            animator.SetBool(param, value);
+        if (animator) animator.SetBool(param, value);
     }
 
     void SetTrigger(string param)
     {
-        if (animator)
-            animator.SetTrigger(param);
+        if (animator) animator.SetTrigger(param);
     }
 
     public Estado ObtenerEstadoActual() => estadoActual;
