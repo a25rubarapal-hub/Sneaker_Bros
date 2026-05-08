@@ -68,7 +68,7 @@ public class slimequenosecae : MonoBehaviour
             Color.blue
         );
 
-        // Girar si hay pared o no hay suelo
+        // Si hay pared o no hay suelo, gira
         if (wallHit.collider != null || groundHit.collider == null)
         {
             Flip();
@@ -90,7 +90,7 @@ public class slimequenosecae : MonoBehaviour
 
         transform.localScale = scale;
 
-        // Cambiar posición del detector de suelo
+        // mover detector de suelo al otro lado
         Vector3 groundPos = groundCheck.localPosition;
         groundPos.x *= -1;
         groundCheck.localPosition = groundPos;
@@ -115,11 +115,7 @@ public class slimequenosecae : MonoBehaviour
 
         if (sonidoGolpe != null)
         {
-            AudioSource.PlayClipAtPoint(
-                sonidoGolpe,
-                transform.position,
-                volumen
-            );
+            AudioSource.PlayClipAtPoint(sonidoGolpe, transform.position, volumen);
         }
 
         Destroy(gameObject);
@@ -129,8 +125,7 @@ public class slimequenosecae : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            PlayerHealth player =
-                collision.gameObject.GetComponent<PlayerHealth>();
+            PlayerHealth player = collision.gameObject.GetComponent<PlayerHealth>();
 
             if (collision.contacts[0].normal.y < -0.5f)
             {
