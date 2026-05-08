@@ -89,15 +89,31 @@ public class MovimientoNPC : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            PlayerHealth player = collision.gameObject.GetComponent<PlayerHealth>();
+            PlayerHealth player =
+                collision.gameObject.GetComponent<PlayerHealth>();
 
             if (collision.contacts[0].normal.y < -0.5f)
             {
+                // Rebote tipo Mario
+                Rigidbody2D playerRb =
+                    collision.gameObject.GetComponent<Rigidbody2D>();
+
+                if (playerRb != null)
+                {
+                    playerRb.linearVelocity = new Vector2(
+                        playerRb.linearVelocity.x,
+                        8f
+                    );
+                }
+
                 TakeDamage(1);
             }
             else
             {
-                player.TakeDamage(1);
+                if (player != null)
+                {
+                    player.TakeDamage(1);
+                }
             }
         }
     }

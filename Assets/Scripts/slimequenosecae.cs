@@ -41,7 +41,7 @@ public class slimequenosecae : MonoBehaviour
 
         transform.Translate(Vector2.right * direction * speed * Time.deltaTime);
 
-        // Raycast pared
+        // Pared
         Vector2 rayDirection = movingRight ? Vector2.right : Vector2.left;
         Vector2 origin = (Vector2)transform.position + Vector2.up * 0.1f;
 
@@ -54,7 +54,7 @@ public class slimequenosecae : MonoBehaviour
 
         Debug.DrawRay(origin, rayDirection * checkDistance, Color.red);
 
-        // Raycast suelo
+        // Suelo
         RaycastHit2D groundHit = Physics2D.Raycast(
             groundCheck.position,
             Vector2.down,
@@ -68,7 +68,7 @@ public class slimequenosecae : MonoBehaviour
             Color.blue
         );
 
-        // Si hay pared o no hay suelo, gira
+        // Girar si pared o no hay suelo
         if (wallHit.collider != null || groundHit.collider == null)
         {
             Flip();
@@ -125,10 +125,23 @@ public class slimequenosecae : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            PlayerHealth player = collision.gameObject.GetComponent<PlayerHealth>();
+            PlayerHealth player =
+                collision.gameObject.GetComponent<PlayerHealth>();
 
             if (collision.contacts[0].normal.y < -0.5f)
             {
+                // Rebote tipo Mario
+                Rigidbody2D playerRb =
+                    collision.gameObject.GetComponent<Rigidbody2D>();
+
+                if (playerRb != null)
+                {
+                    playerRb.linearVelocity = new Vector2(
+                        playerRb.linearVelocity.x,
+                        8f
+                    );
+                }
+
                 TakeDamage(1);
             }
             else
