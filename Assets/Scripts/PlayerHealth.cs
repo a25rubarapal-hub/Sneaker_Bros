@@ -12,6 +12,11 @@ public class PlayerHealth : MonoBehaviour
 
     public float invincibleTime = 1f;
 
+    [Header("Rebote de Daño")]
+    public float fuerzaDañoX = 15f; // Mucho hacia atrás
+    public float fuerzaDañoY = 3f;  // Poco hacia arriba
+    public float tiempoBloqueoDaño = 0.3f; // Tiempo que pierdes el control al sufrir daño
+
     [Header("UI Death Screen")]
     public GameObject gameOverScreen;
 
@@ -33,7 +38,8 @@ public class PlayerHealth : MonoBehaviour
             gameOverScreen.SetActive(false);
     }
 
-    public void TakeDamage(int damage)
+    // ── MODIFICADO: Ahora puede recibir quién es el atacante ──
+    public void TakeDamage(int damage, Transform atacante = null)
     {
         if (isInvincible || isDead) return;
 
@@ -44,6 +50,22 @@ public class PlayerHealth : MonoBehaviour
         {
             StartCoroutine(DieSequence());
             return;
+        }
+
+        // --- Lógica del Empujón ---
+        Movimiento mov = GetComponent<Movimiento>();
+        if (mov != null)
+        {
+            // Si el atacante no se especifica, te empuja por la espalda.
+            float dirX = -Mathf.Sign(transform.localScale.x);
+
+            // Si sabemos quién nos atacó, nos empuja al lado contrario.
+            if (atacante != null)
+            {
+                dirX = (transform.position.x < atacante.position.x) ? -1f : 1f;
+            }
+
+            mov.AplicarRebote(new Vector2(fuerzaDañoX * dirX, fuerzaDañoY), tiempoBloqueoDaño);
         }
 
         // Sonido de daño

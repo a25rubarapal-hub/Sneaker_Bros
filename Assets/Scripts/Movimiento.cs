@@ -1,5 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
+using System.Collections; // <- Necesario para las Corrutinas
 
 public class Movimiento : MonoBehaviour
 {
@@ -86,7 +87,7 @@ public class Movimiento : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!CanMove) return;
+        if (!CanMove) return; // Si no puede moverse, la física fluye libremente
 
         float currentSpeed = isCrouching ? Speed * CrouchSpeedMultiplier : Speed;
 
@@ -99,5 +100,22 @@ public class Movimiento : MonoBehaviour
     public void SetTeleporting(bool value)
     {
         IsTeleporting = value;
+    }
+
+    // ── NUEVO: Función para empujar al jugador ─────────────────────────
+    public void AplicarRebote(Vector2 fuerza, float tiempoBloqueo)
+    {
+        StartCoroutine(RutinaRebote(fuerza, tiempoBloqueo));
+    }
+
+    private IEnumerator RutinaRebote(Vector2 fuerza, float tiempo)
+    {
+        CanMove = false; // Bloquea tus controles
+        Velocity = 0f; // Anula la inercia
+        Rigidbody2D.linearVelocity = fuerza; // Sale volando
+
+        yield return new WaitForSeconds(tiempo); // Espera en el aire
+
+        CanMove = true; // Te devuelve el control
     }
 }
