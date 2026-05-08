@@ -2363,7 +2363,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0036010742, y: -0.5849333}
+  m_Offset: {x: -1.1442261, y: 0.66211176}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -2373,7 +2373,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.3817444, y: 2.1926298}
+  m_Size: {x: 4.981079, y: 4.68672}
   m_EdgeRadius: 0
 --- !u!4 &225030759
 Transform:
@@ -8836,7 +8836,7 @@ Transform:
   m_GameObject: {fileID: 682299832}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1065, y: 6.1, z: 0}
+  m_LocalPosition: {x: 1089.4, y: 4.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8921,7 +8921,7 @@ MonoBehaviour:
   maxHealth: 3
   health: 0
   invincibleTime: 1
-  "fuerzaDa\xF1oX": 15
+  "fuerzaDa\xF1oX": 2
   "fuerzaDa\xF1oY": 3
   "tiempoBloqueoDa\xF1o": 0.3
   gameOverScreen: {fileID: 724764935}
@@ -13069,6 +13069,7 @@ Transform:
   m_Children:
   - {fileID: 1067382984}
   - {fileID: 626946216}
+  - {fileID: 1725201952}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &971854156
@@ -735760,7 +735761,7 @@ MonoBehaviour:
   bossAnimator: {fileID: 1725201950}
   triggerReacionar: "RDa\xF1o"
   fuerzaReboteVertical: 7
-  fuerzaReboteHorizontal: 25
+  fuerzaReboteHorizontal: 5
   tiempoBloqueo: 0.2
 --- !u!1 &1460351703
 GameObject:
@@ -745247,7 +745248,7 @@ GameObject:
   - component: {fileID: 1725201959}
   - component: {fileID: 1725201961}
   m_Layer: 0
-  m_Name: Skeleton Idle_0
+  m_Name: Skeleton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -745342,8 +745343,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1725201949}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1094.7, y: 4.96, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1091.9166, y: 8.08997, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -745351,7 +745352,7 @@ Transform:
   - {fileID: 291715276}
   - {fileID: 13696831}
   - {fileID: 1458117105}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 971032105}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!58 &1725201955
 CircleCollider2D:
@@ -745406,7 +745407,7 @@ MonoBehaviour:
   paramIdle: Idle
   triggerRecibir: Recibir
   triggerReaccionar: Reacionar
-  vidaMaxima: 50
+  vidaMaxima: 10
   prefabMuerte: {fileID: 525342634}
   velocidadMovimiento: 3
   duracionAtaque: 0.8
@@ -752040,7 +752041,6 @@ SceneRoots:
   - {fileID: 694716534}
   - {fileID: 1531322986}
   - {fileID: 271896340}
-  - {fileID: 1725201952}
   - {fileID: 525342639}
   - {fileID: 1460351706}
   - {fileID: 2017537520}
