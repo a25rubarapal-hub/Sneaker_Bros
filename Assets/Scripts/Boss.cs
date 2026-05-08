@@ -276,6 +276,12 @@ public class Boss : MonoBehaviour
     {
         estadoActual = Estado.Dead;
 
+        // Reportar que el boss fue matado
+        if (Game_manager.Instance != null)
+        {
+            Game_manager.Instance.bossKilled = true;
+        }
+
         if (prefabMuerte != null)
         {
             GameObject clonMuerte = Instantiate(prefabMuerte, transform.position, transform.rotation);

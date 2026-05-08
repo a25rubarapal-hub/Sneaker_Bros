@@ -70,6 +70,12 @@ public class Movimiento : MonoBehaviour
             Rigidbody2D.AddForce(Vector2.up * JumpForce);
             LastJump = Time.time;
 
+            // Incrementar contador de saltos
+            if (Game_manager.Instance != null)
+            {
+                Game_manager.Instance.totalJumps++;
+            }
+
             if (sonidoSalto != null)
             {
                 audioSource.clip = sonidoSalto;

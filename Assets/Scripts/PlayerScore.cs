@@ -9,6 +9,13 @@ public class PlayerScore : MonoBehaviour
     public void SumarPuntos(int puntos)
     {
         puntuacion += puntos;
+
+        // Reportar a Game_manager
+        if (Game_manager.Instance != null)
+        {
+            Game_manager.Instance.totalScore += puntos;
+        }
+
         ActualizarUI();
     }
 

@@ -18,6 +18,12 @@ public class PlayerCoins : MonoBehaviour
     {
         monedas++;
 
+        // Reportar a Game_manager
+        if (Game_manager.Instance != null)
+        {
+            Game_manager.Instance.totalCoins++;
+        }
+
         // 💯 puntos
         if (playerScore != null)
             playerScore.SumarPuntos(100);

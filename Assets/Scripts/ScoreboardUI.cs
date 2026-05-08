@@ -58,6 +58,14 @@ public class ScoreboardUI : MonoBehaviour
 
         int puntuacionTotal = puntuacionFinal + tiempoBonus;
 
+        // Actualizar datos en Game_manager
+        if (Game_manager.Instance != null)
+        {
+            Game_manager.Instance.playerName = nombre;
+            Game_manager.Instance.totalScore = puntuacionTotal; // Asegurar que tenga el total final
+            Game_manager.Instance.SaveGameData();
+        }
+
         Debug.Log("Jugador: " + nombre + " | Puntos finales: " + puntuacionTotal);
 
         VolverAlMenu();
