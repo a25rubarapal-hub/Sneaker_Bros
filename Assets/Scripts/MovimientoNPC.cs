@@ -73,14 +73,13 @@ public class MovimientoNPC : MonoBehaviour
     void Die()
     {
         if (playerScore != null)
-        {
             playerScore.SumarPuntos(500);
-        }
+
+        if (Mondongo.Instance != null)
+            Mondongo.Instance.enemigosEliminados++;
 
         if (sonidoGolpe != null)
-        {
             AudioSource.PlayClipAtPoint(sonidoGolpe, transform.position, volumen);
-        }
 
         Destroy(gameObject);
     }
@@ -93,6 +92,19 @@ public class MovimientoNPC : MonoBehaviour
 
             if (collision.contacts[0].normal.y < -0.5f)
             {
+<<<<<<< Updated upstream
+=======
+                Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
+
+                if (playerRb != null)
+                {
+                    playerRb.linearVelocity = new Vector2(
+                        playerRb.linearVelocity.x,
+                        8f
+                    );
+                }
+
+>>>>>>> Stashed changes
                 TakeDamage(1);
             }
             else
