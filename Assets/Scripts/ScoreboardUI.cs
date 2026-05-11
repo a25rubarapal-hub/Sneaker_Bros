@@ -44,18 +44,6 @@ public class ScoreboardUI : MonoBehaviour
             return;
         }
 
-<<<<<<< Updated upstream
-        int tiempoBonus = 0;
-
-        if (gameTimer != null)
-        {
-            tiempoBonus = Mathf.CeilToInt(gameTimer.GetTiempoRestante()) * 10;
-        }
-
-        int puntuacionTotal = puntuacionFinal + tiempoBonus;
-
-        Debug.Log("Jugador: " + nombre + " | Puntos finales: " + puntuacionTotal);
-=======
         if (Game_manager.Instance != null)
         {
             Game_manager.Instance.playerName = nombre;
@@ -64,7 +52,6 @@ public class ScoreboardUI : MonoBehaviour
         }
 
         Debug.Log("Jugador: " + nombre + " | Puntos finales: " + puntuacionFinal);
->>>>>>> Stashed changes
 
         StartCoroutine(EsperarYVolver());
     }

@@ -14,9 +14,6 @@ public class Mondongo : MonoBehaviour
 
     void Awake()
     {
-<<<<<<< Updated upstream
-        // Replace <username>, <password>, and <cluster-url> with your actual MongoDB Atlas credentials
-=======
         if (Instance == null)
         {
             Instance = this;
@@ -28,30 +25,20 @@ public class Mondongo : MonoBehaviour
             return;
         }
 
->>>>>>> Stashed changes
         string connectionString = "mongodb+srv://a25rubgonlie_db_user:FzGlr4kakXEMD5qZ@cluster0.8atznye.mongodb.net/?appName=Cluster0";
 
         try
         {
             client = new MongoClient(connectionString);
-<<<<<<< Updated upstream
-            database = client.GetDatabase("SneakerBros");  // Your database name
-            usersCollection = database.GetCollection<BsonDocument>("a25rubgonlie_db_user");  // Example collection
-            Debug.Log("Conexión exitosa");
-=======
             database = client.GetDatabase("SneakerBros");
             partidasCollection = database.GetCollection<BsonDocument>("partidas");
             Debug.Log("✅ Conexión exitosa a MongoDB");
->>>>>>> Stashed changes
         }
         catch (System.Exception e)
         {
             Debug.LogError("❌ MongoDB Connection Error: " + e.Message);
         }
     }
-<<<<<<< Updated upstream
-}
-=======
 
     public void GuardarPartida(string nombre, int puntuacion, int enemigos, int saltos, bool boss)
     {
@@ -80,4 +67,3 @@ public class Mondongo : MonoBehaviour
             Debug.Log("✅ Partida guardada: " + nombre + " | " + puntuacion + " pts | Enemigos: " + enemigos + " | Saltos: " + saltos + " | Boss: " + boss);
     }
 }
->>>>>>> Stashed changes
