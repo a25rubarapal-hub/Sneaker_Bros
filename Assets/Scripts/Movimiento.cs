@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
  
 public class Movimiento : MonoBehaviour
 {
@@ -97,6 +98,28 @@ public class Movimiento : MonoBehaviour
             (Mathf.Abs(Velocity) < 0.01f ? 0.0f : Velocity) * currentSpeed,
             Rigidbody2D.linearVelocity.y
         );
+    }
+ 
+    /// <summary>
+    /// Aplica un impulso al jugador y bloquea el control durante 'duracion' segundos.
+    /// Usado por PlayerHealth y HeadSensor para el rebote al recibir daño o pisar al boss.
+    /// </summary>
+    public void AplicarRebote(Vector2 fuerza, float duracion)
+    {
+        if (Rigidbody2D == null) return;
+ 
+        CanMove = false;
+        Velocity = 0f;
+        Rigidbody2D.linearVelocity = Vector2.zero;
+        Rigidbody2D.AddForce(fuerza, ForceMode2D.Impulse);
+ 
+        StartCoroutine(RecuperarControl(duracion));
+    }
+ 
+    private IEnumerator RecuperarControl(float duracion)
+    {
+        yield return new WaitForSeconds(duracion);
+        CanMove = true;
     }
  
     public void SetTeleporting(bool value)
