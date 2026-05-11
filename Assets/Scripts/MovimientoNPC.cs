@@ -92,8 +92,6 @@ public class MovimientoNPC : MonoBehaviour
 
             if (collision.contacts[0].normal.y < -0.5f)
             {
-<<<<<<< Updated upstream
-=======
                 Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
 
                 if (playerRb != null)
@@ -104,7 +102,6 @@ public class MovimientoNPC : MonoBehaviour
                     );
                 }
 
->>>>>>> Stashed changes
                 TakeDamage(1);
             }
             else
