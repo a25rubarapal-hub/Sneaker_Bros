@@ -73,14 +73,13 @@ public class MovimientoNPC : MonoBehaviour
     void Die()
     {
         if (playerScore != null)
-        {
             playerScore.SumarPuntos(500);
-        }
+
+        if (Mondongo.Instance != null)
+            Mondongo.Instance.enemigosEliminados++;
 
         if (sonidoGolpe != null)
-        {
             AudioSource.PlayClipAtPoint(sonidoGolpe, transform.position, volumen);
-        }
 
         Destroy(gameObject);
     }
@@ -89,14 +88,13 @@ public class MovimientoNPC : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            PlayerHealth player =
-                collision.gameObject.GetComponent<PlayerHealth>();
+            PlayerHealth player = collision.gameObject.GetComponent<PlayerHealth>();
 
             if (collision.contacts[0].normal.y < -0.5f)
             {
-                // Rebote tipo Mario
-                Rigidbody2D playerRb =
-                    collision.gameObject.GetComponent<Rigidbody2D>();
+<<<<<<< Updated upstream
+=======
+                Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
 
                 if (playerRb != null)
                 {
@@ -106,14 +104,12 @@ public class MovimientoNPC : MonoBehaviour
                     );
                 }
 
+>>>>>>> Stashed changes
                 TakeDamage(1);
             }
             else
             {
-                if (player != null)
-                {
-                    player.TakeDamage(1);
-                }
+                player.TakeDamage(1);
             }
         }
     }
