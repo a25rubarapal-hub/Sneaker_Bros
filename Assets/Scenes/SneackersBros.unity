@@ -2995,7 +2995,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0036010742, y: -0.5849333}
+  m_Offset: {x: -1.201294, y: -0.41743612}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -3005,7 +3005,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.3817444, y: 2.1926298}
+  m_Size: {x: 0.2902832, y: 0.2583065}
   m_EdgeRadius: 0
 --- !u!4 &225030759
 Transform:
@@ -6501,7 +6501,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0036010742, y: -0.5849333}
+  m_Offset: {x: -1.0554123, y: -0.33098578}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -6511,7 +6511,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.3817444, y: 2.1926298}
+  m_Size: {x: 3.499771, y: 2.7005248}
   m_EdgeRadius: 0
 --- !u!1 &508921986
 GameObject:
@@ -13299,6 +13299,7 @@ GameObject:
   m_Component:
   - component: {fileID: 937042759}
   - component: {fileID: 937042760}
+  - component: {fileID: 937042761}
   m_Layer: 0
   m_Name: HeadSensor
   m_TagString: Untagged
@@ -13355,7 +13356,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0036010742, y: -0.5849333}
+  m_Offset: {x: -1.1418457, y: 0.8306887}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -13365,8 +13366,26 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.3817444, y: 2.1926298}
+  m_Size: {x: 1.0791016, y: 0.26911402}
   m_EdgeRadius: 0
+--- !u!114 &937042761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937042758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05c62a814007a474287df8f6eb7ca65c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HeadSensor
+  boss: {fileID: 1725201962}
+  bossAnimator: {fileID: 1725201950}
+  triggerReacionar: "RDa\xF1o"
+  fuerzaReboteVertical: 10
+  fuerzaReboteHorizontal: 3
+  tiempoBloqueo: 0.2
 --- !u!1 &946423446
 GameObject:
   m_ObjectHideFlags: 0
@@ -749211,7 +749230,7 @@ Animator:
   m_GameObject: {fileID: 1725201949}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 943e7b70a6f35604b819b34964c926b6, type: 2}
+  m_Controller: {fileID: 9100000, guid: 8acecf2cb4e67514e8bd98349f29ee1e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -749349,28 +749368,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91bbbb243afdfa4093da35aa7502004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JefeMario
-  estadoActual: 0
-  paramCaminar: Caminar
-  triggerAtacar: Atacar
-  triggerRecibir: Recibir
-  triggerReaccionar: Reacionar
-  paramMuerto: Muerto
-  velocidadMovimiento: 3
-  tagPared: Pared
-  duracionAtaque: 0.8
-  duracionRecibir: 0.5
-  duracionReaccionar: 0.3
-  duracionCaminar: 3
-  duracionIdle: 1
-  animator: {fileID: 0}
-  hashCaminar: 0
-  hashAtacar: 0
-  hashRecibir: 0
-  hashReaccionar: 0
-  hashMuerto: 0
-  timerEstado: 0
-  movingRight: 1
-  caminandoActualmente: 0
 --- !u!50 &1725201959
 Rigidbody2D:
   serializedVersion: 5
@@ -749462,15 +749459,15 @@ MonoBehaviour:
   triggerRecibir: Recibir
   triggerReaccionar: Reacionar
   vidaMaxima: 5
-  prefabMuerte: {fileID: 0}
+  prefabMuerte: {fileID: 1944749246}
   velocidadMovimiento: 3
   duracionAtaque: 0.8
   duracionRecibir: 0.3
   duracionReaccionar: 0.3
   duracionIdle: 1
   danioAtaque: 1
-  hitboxDanio: {fileID: 0}
-  radarAtaque: {fileID: 0}
+  hitboxDanio: {fileID: 225030758}
+  radarAtaque: {fileID: 508770925}
   cooldownDanio: 2
   cooldownEntreAtaques: 1.2
   tagJugador: Player
@@ -753022,7 +753019,6 @@ GameObject:
   - component: {fileID: 1944749250}
   - component: {fileID: 1944749249}
   - component: {fileID: 1944749248}
-  - component: {fileID: 1944749247}
   m_Layer: 0
   m_Name: SkeletonMuerto
   m_TagString: Untagged
@@ -753030,38 +753026,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &1944749247
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1944749246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85bada9bda9c60b42844f8ac16207dc6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Boss
-  paramCaminar: Caminar
-  paramAtacar: Atacar
-  paramIdle: Idle
-  triggerRecibir: Recibir
-  triggerReaccionar: Reacionar
-  vidaMaxima: 5
-  prefabMuerte: {fileID: 0}
-  velocidadMovimiento: 3
-  duracionAtaque: 0.8
-  duracionRecibir: 0.3
-  duracionReaccionar: 0.3
-  duracionIdle: 1
-  danioAtaque: 1
-  hitboxDanio: {fileID: 0}
-  radarAtaque: {fileID: 0}
-  cooldownDanio: 2
-  cooldownEntreAtaques: 1.2
-  tagJugador: Player
-  tagPared: Pared
-  jugadorCercaParaAtacar: 0
 --- !u!61 &1944749248
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -753147,28 +753111,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91bbbb243afdfa4093da35aa7502004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JefeMario
-  estadoActual: 0
-  paramCaminar: Caminar
-  triggerAtacar: Atacar
-  triggerRecibir: Recibir
-  triggerReaccionar: Reacionar
-  paramMuerto: Muerto
-  velocidadMovimiento: 3
-  tagPared: Pared
-  duracionAtaque: 0.8
-  duracionRecibir: 0.5
-  duracionReaccionar: 0.3
-  duracionCaminar: 3
-  duracionIdle: 1
-  animator: {fileID: 0}
-  hashCaminar: 0
-  hashAtacar: 0
-  hashRecibir: 0
-  hashReaccionar: 0
-  hashMuerto: 0
-  timerEstado: 0
-  movingRight: 1
-  caminandoActualmente: 0
 --- !u!58 &1944749251
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -753215,7 +753157,7 @@ Animator:
   m_GameObject: {fileID: 1944749246}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 943e7b70a6f35604b819b34964c926b6, type: 2}
+  m_Controller: {fileID: 9100000, guid: ab8fad89fe4293a4698d31a016fde74c, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
