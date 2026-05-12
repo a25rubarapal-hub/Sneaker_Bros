@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
@@ -21,5 +22,10 @@ public class MenuManager : MonoBehaviour
     {
         panelMenu.SetActive(true);
         panelOpciones.SetActive(false);
+    }
+
+    public void IrATutorial()
+    {
+        SceneManager.LoadScene("Tutorial");
     }
 }

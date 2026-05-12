@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SneackersBros.unity
     guid: 3867662f78571c540894f1b4d866f5e5
+  - enabled: 1
+    path: Assets/Scenes/Tutorial.unity
+    guid: d8b4b4aca115a0243ad028dda743688e
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 69d3511b671743d4b9f685379d4b1c6a, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
