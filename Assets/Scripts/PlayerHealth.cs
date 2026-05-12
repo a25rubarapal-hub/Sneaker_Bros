@@ -14,6 +14,10 @@ public class PlayerHealth : MonoBehaviour
 
     [Header("UI Death Screen")]
     public GameObject gameOverScreen;
+    public GameObject secondImage;
+
+    [Header("Animación")]
+    public float shrinkDuration = 2f;
 
     [Header("Score System")]
     public PlayerScore playerScore;
@@ -31,6 +35,9 @@ public class PlayerHealth : MonoBehaviour
 
         if (gameOverScreen != null)
             gameOverScreen.SetActive(false);
+
+        if (secondImage != null)
+            secondImage.SetActive(false);
     }
 
     public void TakeDamage(int damage)
@@ -46,7 +53,6 @@ public class PlayerHealth : MonoBehaviour
             return;
         }
 
-        // Sonido de daño
         if (sonidoDaño != null)
         {
             AudioSource audioTemp = gameObject.AddComponent<AudioSource>();
@@ -84,10 +90,32 @@ public class PlayerHealth : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
+        // Mostrar ambas imágenes a la vez
         if (gameOverScreen != null)
             gameOverScreen.SetActive(true);
 
-        yield return new WaitForSeconds(1f);
+        if (secondImage != null)
+            secondImage.SetActive(true);
+
+        // Animar encogimiento de la primera
+        Vector3 originalScale = gameOverScreen.transform.localScale;
+        Vector3 targetScale = Vector3.zero;
+
+        float elapsed = 0f;
+
+        while (elapsed < shrinkDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            gameOverScreen.transform.localScale =
+                Vector3.Lerp(originalScale, targetScale, elapsed / shrinkDuration);
+
+            yield return null;
+        }
+
+        gameOverScreen.transform.localScale = targetScale;
+
+        yield return new WaitForSeconds(2f);
 
         SceneManager.LoadScene("MainMenu");
     }
