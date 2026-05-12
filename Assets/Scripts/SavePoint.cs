@@ -7,8 +7,8 @@ public class SavePoint : MonoBehaviour
         if (col.CompareTag("Player"))
         {
             Vector3 pos = col.transform.position;
-            GuardadoJava.Guardar(pos.x, pos.y);
-            Debug.Log("💾 Partida Guardada");
+            GuardadoSQLite.Guardar(pos.x, pos.y);
+            Debug.Log("Posición guardada en SQLite: " + pos);
         }
     }
 }
