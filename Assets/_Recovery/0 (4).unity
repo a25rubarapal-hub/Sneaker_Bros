@@ -10051,7 +10051,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f0d25554b78b974eab22808fdd03881, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameTimer
-  tiempoInicial: 500
+  tiempoInicial: 300
   tiempoActual: 0
   timerActivo: 1
   timerText: {fileID: 971854157}
