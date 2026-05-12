@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(BoxCollider2D))] // Si decides usar CapsuleCollider, recuerda cambiar esto
 public class Boss : MonoBehaviour
 {
     public enum Estado { Idle, Walk, Attack, Hit, React, Dead }
@@ -12,19 +12,11 @@ public class Boss : MonoBehaviour
     [SerializeField] private string paramCaminar = "Caminar";
     [SerializeField] private string paramAtacar = "Atacar";
     [SerializeField] private string paramIdle = "Idle";
-<<<<<<< Updated upstream
-    [SerializeField] private string triggerRecibir = "RDaño";
-    [SerializeField] private string triggerReaccionar = "Reacionar";
-
-    [Header("Vida y Muerte")]
-    [SerializeField] private int vidaMaxima = 50;
-=======
     [SerializeField] private string triggerRecibir = "Recibir";
     [SerializeField] private string triggerReaccionar = "Reacionar";
 
     [Header("Vida y Muerte")]
     [SerializeField] private int vidaMaxima = 5;
->>>>>>> Stashed changes
     [SerializeField] private GameObject prefabMuerte;
     private int vidaActual;
 
@@ -112,14 +104,8 @@ public class Boss : MonoBehaviour
             SetBool(paramAtacar, true);
         }
         AplicarDanioContinuo();
-
-<<<<<<< Updated upstream
-        if (caminandoActualmente) Mover();
-=======
-        AplicarDanioContinuo();
     }
 
-    // EL CAMBIO CLAVE: Las físicas en Unity SIEMPRE van en FixedUpdate
     void FixedUpdate()
     {
         if (estadoActual == Estado.Dead) return;
@@ -128,7 +114,6 @@ public class Boss : MonoBehaviour
         {
             Mover();
         }
->>>>>>> Stashed changes
     }
 
     void AplicarDanioContinuo()
@@ -140,11 +125,7 @@ public class Boss : MonoBehaviour
             PlayerHealth player = colliderJugador.GetComponent<PlayerHealth>();
             if (player != null)
             {
-<<<<<<< Updated upstream
-                player.TakeDamage(danioAtaque, transform);
-=======
                 player.TakeDamage(danioAtaque);
->>>>>>> Stashed changes
                 timerCooldownDanio = cooldownDanio;
             }
         }
@@ -184,13 +165,9 @@ public class Boss : MonoBehaviour
             movingRight = transformJugador.position.x > transform.position.x;
 
         float dir = movingRight ? 1f : -1f;
-<<<<<<< Updated upstream
-        transform.Translate(Vector2.right * dir * velocidadMovimiento * Time.deltaTime);
-=======
 
-        // Mueve horizontalmente y mantiene la velocidad de caída intacta
+        // Limpiado a 'velocity' para compatibilidad
         rb.linearVelocity = new Vector2(dir * velocidadMovimiento, rb.linearVelocity.y);
->>>>>>> Stashed changes
 
         Vector3 scale = transform.localScale;
         scale.x = Mathf.Abs(scale.x) * dir;
@@ -235,24 +212,13 @@ public class Boss : MonoBehaviour
 
     void CambiarEstado(Estado nuevoEstado)
     {
-<<<<<<< Updated upstream
-        // Permitir interrumpir Attack, Hit o React con un nuevo Hit
-=======
->>>>>>> Stashed changes
         bool esInterrupcion = nuevoEstado == Estado.Hit &&
                               (estadoActual == Estado.Attack ||
                                estadoActual == Estado.Hit ||
                                estadoActual == Estado.React);
-<<<<<<< Updated upstream
 
         if (estadoActual == nuevoEstado && !esInterrupcion) return;
 
-        Debug.Log($"[Boss] CambiarEstado: {estadoActual} → {nuevoEstado}");
-=======
-
-        if (estadoActual == nuevoEstado && !esInterrupcion) return;
-
->>>>>>> Stashed changes
         estadoActual = nuevoEstado;
         caminandoActualmente = false;
 
@@ -264,10 +230,7 @@ public class Boss : MonoBehaviour
         {
             case Estado.Idle:
                 rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-<<<<<<< Updated upstream
-=======
                 rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
->>>>>>> Stashed changes
                 SetBool(paramIdle, true);
                 timerEstado = duracionIdle;
                 break;
@@ -288,14 +251,10 @@ public class Boss : MonoBehaviour
 
             case Estado.Hit:
                 rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-<<<<<<< Updated upstream
-                // Resetea el trigger antes de lanzarlo para evitar colas acumuladas
-=======
->>>>>>> Stashed changes
                 animator.ResetTrigger(triggerRecibir);
                 SetTrigger(triggerRecibir);
                 timerEstado = duracionRecibir;
-                Debug.Log($"[Boss] Trigger '{triggerRecibir}' lanzado. Vida restante: {vidaActual}");
+                Debug.Log("[Boss] Trigger '" + triggerRecibir + "' lanzado. Vida restante: " + vidaActual);
                 break;
 
             case Estado.React:
@@ -306,10 +265,7 @@ public class Boss : MonoBehaviour
                 break;
 
             case Estado.Dead:
-<<<<<<< Updated upstream
-=======
                 rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
->>>>>>> Stashed changes
                 break;
         }
     }
@@ -319,11 +275,8 @@ public class Boss : MonoBehaviour
         if (estadoActual == Estado.Dead) return;
 
         vidaActual -= 1;
-<<<<<<< Updated upstream
-        Debug.Log($"[Boss] RecibirGolpeEnCabeza() | Vida: {vidaActual}/{vidaMaxima} | Estado actual: {estadoActual}");
-=======
+
         Debug.Log("[Boss] RecibirGolpeEnCabeza() | Vida: " + vidaActual + "/" + vidaMaxima + " | Estado actual: " + estadoActual);
->>>>>>> Stashed changes
 
         if (vidaActual <= 0) { vidaActual = 0; Morir(); }
         else { CambiarEstado(Estado.Hit); }
@@ -333,10 +286,6 @@ public class Boss : MonoBehaviour
     {
         estadoActual = Estado.Dead;
 
-<<<<<<< Updated upstream
-        // Reportar que el boss fue matado
-=======
->>>>>>> Stashed changes
         if (Game_manager.Instance != null)
         {
             Game_manager.Instance.bossKilled = true;
@@ -355,13 +304,7 @@ public class Boss : MonoBehaviour
     void SetBool(string param, bool value) { if (animator) animator.SetBool(param, value); }
     void SetTrigger(string param) { if (animator) animator.SetTrigger(param); }
 
-<<<<<<< Updated upstream
-    public Estado ObtenerEstadoActual() => estadoActual;
-    public int ObtenerVida() => vidaActual;
-    public int ObtenerVidaMaxima() => vidaMaxima;
-=======
     public Estado ObtenerEstadoActual() { return estadoActual; }
     public int ObtenerVida() { return vidaActual; }
     public int ObtenerVidaMaxima() { return vidaMaxima; }
->>>>>>> Stashed changes
 }

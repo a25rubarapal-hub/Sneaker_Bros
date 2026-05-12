@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
 using UnityEngine;
-=======
-﻿using UnityEngine;
->>>>>>> Stashed changes
 
 public class HeadSensor : MonoBehaviour
 {
@@ -25,6 +21,7 @@ public class HeadSensor : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (!col.CompareTag("Player")) return;
+
         if (boss == null)
         {
             Debug.LogError("[HeadSensor] Boss no asignado en el Inspector.");
@@ -34,27 +31,32 @@ public class HeadSensor : MonoBehaviour
         Rigidbody2D rb = col.GetComponent<Rigidbody2D>();
         Movimiento mov = col.GetComponent<Movimiento>();
 
-        bool jugadorCayendo = rb != null && rb.linearVelocity.y <= 0.1f;
+        // Usamos 'velocity' puro para evitar errores de compilación
+        bool jugadorCayendo = false;
+        if (rb != null)
+        {
+            jugadorCayendo = rb.linearVelocity.y <= 0.1f;
+        }
+
         bool jugadorArriba = col.transform.position.y > transform.position.y - 0.2f;
 
-        Debug.Log($"[HeadSensor] Contacto con Player | cayendo={jugadorCayendo} (vy={rb?.linearVelocity.y:F2}) | arriba={jugadorArriba}");
+        string vyAproximada = (rb != null) ? rb.linearVelocity.y.ToString("F2") : "null";
+        Debug.Log("[HeadSensor] Contacto con Player | cayendo=" + jugadorCayendo + " (vy=" + vyAproximada + ") | arriba=" + jugadorArriba);
 
         if (jugadorCayendo && jugadorArriba)
         {
             Debug.Log("[HeadSensor] Condiciones OK → llamando RecibirGolpeEnCabeza()");
             boss.RecibirGolpeEnCabeza();
-<<<<<<< Updated upstream
 
             if (bossAnimator != null)
-=======
-if (bossAnimator != null)
->>>>>>> Stashed changes
                 bossAnimator.SetTrigger(triggerReacionar);
 
             if (mov != null)
             {
                 float dirX = (col.transform.position.x < transform.position.x) ? -1f : 1f;
-                mov.AplicarRebote(new Vector2(fuerzaReboteHorizontal * dirX, fuerzaReboteVertical), tiempoBloqueo);
+                Vector2 fuerza = new Vector2(fuerzaReboteHorizontal * dirX, fuerzaReboteVertical);
+
+                mov.AplicarRebote(fuerza, tiempoBloqueo);
             }
             else
             {
