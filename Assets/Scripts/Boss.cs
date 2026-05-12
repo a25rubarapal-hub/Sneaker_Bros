@@ -1,427 +1,311 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(BoxCollider2D))]
-[RequireComponent(typeof(Rigidbody2D))]
 public class Boss : MonoBehaviour
 {
-    public enum Estado
-    {
-        Idle,
-        Walk,
-        Attack,
-        Hit,
-        React,
-        Dead
-    }
-
+    public enum Estado { Idle, Walk, Attack, Hit, React, Dead }
     private Estado estadoActual = Estado.Idle;
 
-    [Header("Vida")]
-    public int vidaMaxima = 50;
+    [Header("Parámetros de Animator")]
+    [SerializeField] private string paramCaminar = "Caminar";
+    [SerializeField] private string triggerAtacar = "Atacar";
+    [SerializeField] private string triggerIdle = "Idle";
+    [SerializeField] private string triggerRecibir = "RDaño";
+    [SerializeField] private string triggerReaccionar = "Reacionar";
+
+    [Header("Vida y Muerte")]
+    [SerializeField] private int vidaMaxima = 50;
+    [SerializeField] private GameObject prefabMuerte;
     private int vidaActual;
 
-    [Header("Muerte")]
-    public GameObject prefabMuerte;
-
     [Header("Movimiento")]
-    public float velocidadMovimiento = 3f;
+    [SerializeField] private float velocidadMovimiento = 3f;
 
-    [Header("Duraciones")]
-    public float duracionIdle = 1f;
-    public float duracionAtaque = 0.8f;
-    public float duracionHit = 0.3f;
-    public float duracionReact = 0.3f;
+    [Header("Duración de Estados")]
+    [SerializeField] private float duracionAtaque = 0.8f;
+    [SerializeField] private float duracionRecibir = 0.3f;
+    [SerializeField] private float duracionReaccionar = 0.3f;
+    [SerializeField] private float duracionIdle = 1f;
 
-    [Header("Ataque")]
-    public int danioAtaque = 1;
-    public float cooldownDanio = 2f;
-    public float cooldownEntreAtaques = 1.2f;
+    [Header("Ataque y Daño")]
+    [SerializeField] private int danioAtaque = 1;
+    [SerializeField] private Collider2D hitboxDanio; // Hitbox que hace daño
+    [SerializeField] private Collider2D radarAtaque; // <- NUEVA: Hitbox que detecta cuándo atacar
+    [SerializeField] private float cooldownDanio = 2f;
 
-    [Header("Colliders")]
-    public Collider2D hitboxDanio;
-    public Collider2D radarAtaque;
+    [Header("Radares")]
+    [SerializeField] private string tagJugador = "Player";
+    [SerializeField] private string tagPared = "Pared";
+    [SerializeField] private float distanciaRayoPared = 1f;
 
-    [Header("Tags")]
-    public string tagJugador = "Player";
-    public string tagPared = "Pared";
-
-    [Header("Animator Parameters")]
-    public string paramIdle = "idle";
-    public string paramWalk = "Walk";
-    public string paramAttack = "Atacar";
-    public string paramHit = "RDaño";
-    public string paramReact = "Reaccionar";
-
-    [Header("Nombre del State de Ataque")]
-    public string nombreStateAtaque = "Attack";
-
+    // ── Referencias ────────────────────────────────────────
     private Animator animator;
     private Rigidbody2D rb;
     private BoxCollider2D bossCollider;
-
-    private Transform jugadorTransform;
-    private Collider2D jugadorCollider;
-
-    private bool movingRight = true;
-    private bool caminando = false;
-    private bool persiguiendoJugador = false;
-
     private float timerEstado = 0f;
     private float timerCooldownDanio = 0f;
-    private float timerCooldownAtaque = 0f;
+    private bool movingRight = true;
+    private bool caminandoActualmente = false;
 
-    [HideInInspector]
-    public bool jugadorCercaParaAtacar = false;
+    // ── Estado interno Radares ─────────────────────────────
+    private Transform transformJugador;
+    private bool persiguiendoJugador = false;
+    private bool jugadorCercaParaAtacar = false;
 
+    // ─────────────────────────────────────────────────────────
     void Start()
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         bossCollider = GetComponent<BoxCollider2D>();
-
         vidaActual = vidaMaxima;
 
         bossCollider.isTrigger = false;
 
-        if (hitboxDanio != null)
-            hitboxDanio.isTrigger = true;
-
-        if (radarAtaque != null)
-            radarAtaque.isTrigger = true;
-
-        BuscarJugador();
-
-        DebugAnimator();
+        if (hitboxDanio != null) hitboxDanio.isTrigger = true;
+        if (radarAtaque != null) radarAtaque.isTrigger = true; // Nos aseguramos de que sea trigger
 
         CambiarEstado(Estado.Walk);
     }
 
     void Update()
     {
-        if (estadoActual == Estado.Dead)
-            return;
+        if (estadoActual == Estado.Dead) return;
 
-        if (jugadorTransform == null || jugadorCollider == null)
-            BuscarJugador();
+        if (timerEstado > 0f) timerEstado -= Time.deltaTime;
+        if (timerCooldownDanio > 0f) timerCooldownDanio -= Time.deltaTime;
 
-        if (timerEstado > 0f)
-            timerEstado -= Time.deltaTime;
+        DetectarParedes();
+        DetectarSiPuedeEmpezarAtaque(); // Ahora usa el nuevo Radar
+        ActualizarLogicaEstado();
 
-        if (timerCooldownDanio > 0f)
-            timerCooldownDanio -= Time.deltaTime;
+        AplicarDanioContinuo();
 
-        if (timerCooldownAtaque > 0f)
-            timerCooldownAtaque -= Time.deltaTime;
-
-        DetectarJugador();
-
-        ActualizarEstados();
-
-        AplicarDanio();
+        if (caminandoActualmente) Mover();
     }
 
-    void FixedUpdate()
+    // ─────────────────────────────────────────────────────────
+    // SISTEMA DE DAÑO CONTINUO
+    // ─────────────────────────────────────────────────────────
+    void AplicarDanioContinuo()
     {
-        if (estadoActual == Estado.Dead)
-            return;
+        if (hitboxDanio == null || timerCooldownDanio > 0f) return;
 
-        if (caminando)
-        {
-            Mover();
-        }
-        else if (estadoActual != Estado.Attack)
-        {
-            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
-        }
-    }
+        List<Collider2D> collidersEnRango = new List<Collider2D>();
+        hitboxDanio.Overlap(ContactFilter2D.noFilter, collidersEnRango);
 
-    void BuscarJugador()
-    {
-        GameObject jugador = GameObject.FindGameObjectWithTag(tagJugador);
-
-        if (jugador != null)
+        foreach (Collider2D col in collidersEnRango)
         {
-            jugadorTransform = jugador.transform;
-            jugadorCollider = jugador.GetComponent<Collider2D>();
+            if (col.CompareTag(tagJugador))
+            {
+                PlayerHealth player = col.GetComponent<PlayerHealth>();
+                if (player != null)
+                {
+                    player.TakeDamage(danioAtaque);
+                    timerCooldownDanio = cooldownDanio;
+                    Debug.Log($"[Boss] ¡Te di un golpe! Esperando {cooldownDanio} segundos para el próximo...");
+                    break;
+                }
+            }
         }
     }
 
-    void DetectarJugador()
+    // ─────────────────────────────────────────────────────────
+    // DETECTAR PARA INICIAR ANIMACIÓN (NUEVO SISTEMA POR HITBOX)
+    // ─────────────────────────────────────────────────────────
+    void DetectarSiPuedeEmpezarAtaque()
     {
-        jugadorCercaParaAtacar = false;
-
-        if (radarAtaque == null || jugadorCollider == null)
-            return;
-
-        if (radarAtaque.IsTouching(jugadorCollider))
+        if (radarAtaque == null)
         {
-            jugadorCercaParaAtacar = true;
+            jugadorCercaParaAtacar = false;
+            return;
+        }
+
+        // Escaneamos quién está dentro de la Hitbox de Detección (Radar)
+        List<Collider2D> collidersEnRango = new List<Collider2D>();
+        radarAtaque.Overlap(ContactFilter2D.noFilter, collidersEnRango);
+
+        jugadorCercaParaAtacar = false; // Por defecto asumimos que no está
+
+        foreach (Collider2D col in collidersEnRango)
+        {
+            if (col.CompareTag(tagJugador))
+            {
+                jugadorCercaParaAtacar = true; // ¡Lo encontramos!
+                break;
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // RADAR DE PAREDES
+    // ─────────────────────────────────────────────────────────
+    void DetectarParedes()
+    {
+        float dir = movingRight ? 1f : -1f;
+        Vector2 origen = transform.position;
+        RaycastHit2D hit = Physics2D.Raycast(origen, Vector2.right * dir, distanciaRayoPared);
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // RADAR DEL JUGADOR (Para la persecución general)
+    // ─────────────────────────────────────────────────────────
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag(tagJugador))
+        {
+            transformJugador = collision.transform;
             persiguiendoJugador = true;
         }
-        else if (jugadorTransform != null)
-        {
-            float distancia =
-                Vector2.Distance(
-                    transform.position,
-                    jugadorTransform.position
-                );
+    }
 
-            persiguiendoJugador = distancia < 5f;
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag(tagJugador))
+        {
+            persiguiendoJugador = false;
+            transformJugador = null;
         }
     }
 
-    void ActualizarEstados()
+    // ─────────────────────────────────────────────────────────
+    // MOVIMIENTO
+    // ─────────────────────────────────────────────────────────
+    void Mover()
+    {
+        if (persiguiendoJugador && transformJugador != null)
+            movingRight = transformJugador.position.x > transform.position.x;
+
+        float dir = movingRight ? 1f : -1f;
+        transform.Translate(Vector2.right * dir * velocidadMovimiento * Time.deltaTime);
+
+        Vector3 scale = transform.localScale;
+        scale.x = Mathf.Abs(scale.x) * dir;
+        transform.localScale = scale;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!persiguiendoJugador && collision.gameObject.CompareTag(tagPared))
+            movingRight = !movingRight;
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // RECIBIR GOLPE
+    // ─────────────────────────────────────────────────────────
+    public void RecibirGolpeEnCabeza()
+    {
+        if (estadoActual == Estado.Dead) return;
+
+        vidaActual -= 1;
+
+        if (vidaActual <= 0)
+        {
+            vidaActual = 0;
+            Morir();
+        }
+        else
+        {
+            CambiarEstado(Estado.Hit);
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // ESTADOS
+    // ─────────────────────────────────────────────────────────
+    void ActualizarLogicaEstado()
     {
         switch (estadoActual)
         {
             case Estado.Idle:
-
-                if (jugadorCercaParaAtacar &&
-                    timerCooldownAtaque <= 0f)
-                {
-                    CambiarEstado(Estado.Attack);
-                }
-                else if (timerEstado <= 0f)
-                {
-                    CambiarEstado(Estado.Walk);
-                }
-
-                break;
-
-            case Estado.Walk:
-
-                if (jugadorCercaParaAtacar &&
-                    timerCooldownAtaque <= 0f)
-                {
-                    CambiarEstado(Estado.Attack);
-                }
-                else if (timerEstado <= 0f)
-                {
-                    CambiarEstado(Estado.Idle);
-                }
-
-                break;
-
-            case Estado.Attack:
-
-                if (AnimacionAtaqueTerminada() ||
-                    timerEstado <= 0f)
-                {
-                    timerCooldownAtaque =
-                        cooldownEntreAtaques;
-
-                    CambiarEstado(Estado.Idle);
-                }
-
-                break;
-
-            case Estado.Hit:
-            case Estado.React:
-
                 if (timerEstado <= 0f)
                 {
                     CambiarEstado(Estado.Walk);
                 }
+                break;
 
+            case Estado.Walk:
+                if (jugadorCercaParaAtacar)
+                {
+                    CambiarEstado(Estado.Attack);
+                    break;
+                }
+                if (timerEstado <= 0f)
+                {
+                    CambiarEstado(Estado.Idle);
+                }
+                break;
+
+            case Estado.Attack:
+                if (timerEstado <= 0f)
+                {
+                    if (jugadorCercaParaAtacar)
+                    {
+                        animator.Play("Attack", -1, 0f);
+                        timerEstado = duracionAtaque;
+                    }
+                    else
+                    {
+                        CambiarEstado(Estado.Idle);
+                    }
+                }
+                break;
+
+            case Estado.Hit:
+            case Estado.React:
+                if (timerEstado <= 0f)
+                {
+                    CambiarEstado(Estado.Walk);
+                }
                 break;
         }
     }
 
     void CambiarEstado(Estado nuevoEstado)
     {
-        if (estadoActual == nuevoEstado)
-            return;
+        if (estadoActual == nuevoEstado) return;
 
         estadoActual = nuevoEstado;
-
-        caminando = false;
-
-        animator.SetBool(paramIdle, false);
-        animator.SetBool(paramWalk, false);
-        animator.SetBool(paramAttack, false);
+        caminandoActualmente = false;
+        SetBool(paramCaminar, false);
 
         switch (estadoActual)
         {
             case Estado.Idle:
-
-                rb.constraints =
-                    RigidbodyConstraints2D.FreezeRotation;
-
-                animator.SetBool(paramIdle, true);
-
+                rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+                SetTrigger(triggerIdle);
                 timerEstado = duracionIdle;
-
-                Debug.Log("Estado: IDLE");
-
                 break;
 
             case Estado.Walk:
-
-                rb.constraints =
-                    RigidbodyConstraints2D.FreezeRotation;
-
-                caminando = true;
-
-                animator.SetBool(paramWalk, true);
-
+                rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+                caminandoActualmente = true;
+                SetBool(paramCaminar, true);
                 timerEstado = Random.Range(2f, 4f);
-
-                Debug.Log("Estado: WALK");
-
                 break;
 
             case Estado.Attack:
-
-                rb.constraints =
-                    RigidbodyConstraints2D.FreezeRotation |
-                    RigidbodyConstraints2D.FreezePositionX;
-
-                rb.linearVelocity =
-                    new Vector2(0f, rb.linearVelocity.y);
-
-                animator.SetBool(paramAttack, true);
-
+                rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+                animator.Play("Attack");
                 timerEstado = duracionAtaque;
-
-                Debug.Log("Estado: ATTACK");
-
                 break;
 
             case Estado.Hit:
-
-                rb.constraints =
-                    RigidbodyConstraints2D.FreezeRotation;
-
-                animator.ResetTrigger(paramHit);
-                animator.SetTrigger(paramHit);
-
-                timerEstado = duracionHit;
-
-                Debug.Log("Estado: HIT");
-
+                rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+                SetTrigger(triggerRecibir);
+                timerEstado = duracionRecibir;
                 break;
 
             case Estado.React:
-
-                rb.constraints =
-                    RigidbodyConstraints2D.FreezeRotation;
-
-                animator.ResetTrigger(paramReact);
-                animator.SetTrigger(paramReact);
-
-                timerEstado = duracionReact;
-
-                Debug.Log("Estado: REACT");
-
+                rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+                SetTrigger(triggerReaccionar);
+                timerEstado = duracionReaccionar;
                 break;
 
             case Estado.Dead:
-
-                Debug.Log("Estado: DEAD");
-
                 break;
-        }
-    }
-
-    bool AnimacionAtaqueTerminada()
-    {
-        AnimatorStateInfo info =
-            animator.GetCurrentAnimatorStateInfo(0);
-
-        return info.IsName(nombreStateAtaque) &&
-               info.normalizedTime >= 1f;
-    }
-
-    void Mover()
-    {
-        if (persiguiendoJugador &&
-            jugadorTransform != null)
-        {
-            movingRight =
-                jugadorTransform.position.x >
-                transform.position.x;
-        }
-
-        float dir = movingRight ? 1f : -1f;
-
-        rb.linearVelocity =
-            new Vector2(
-                velocidadMovimiento * dir,
-                rb.linearVelocity.y
-            );
-
-        Vector3 escala = transform.localScale;
-
-        escala.x = Mathf.Abs(escala.x) * dir;
-
-        transform.localScale = escala;
-    }
-
-    void AplicarDanio()
-    {
-        if (hitboxDanio == null)
-            return;
-
-        if (jugadorCollider == null)
-            return;
-
-        if (timerCooldownDanio > 0f)
-            return;
-
-        if (hitboxDanio.IsTouching(jugadorCollider))
-        {
-            PlayerHealth player =
-                jugadorCollider.GetComponent<PlayerHealth>();
-
-            if (player != null)
-            {
-                player.TakeDamage(danioAtaque);
-
-                timerCooldownDanio = cooldownDanio;
-            }
-        }
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (persiguiendoJugador)
-            return;
-
-        if (!collision.gameObject.CompareTag(tagPared))
-            return;
-
-        foreach (ContactPoint2D contacto in collision.contacts)
-        {
-            if (contacto.normal.x > 0.5f && !movingRight)
-            {
-                movingRight = true;
-                break;
-            }
-            else if (contacto.normal.x < -0.5f && movingRight)
-            {
-                movingRight = false;
-                break;
-            }
-        }
-    }
-
-    public void RecibirGolpeEnCabeza()
-    {
-        if (estadoActual == Estado.Dead)
-            return;
-
-        vidaActual--;
-
-        Debug.Log("Vida restante: " + vidaActual);
-
-        if (vidaActual <= 0)
-        {
-            Morir();
-        }
-        else
-        {
-            CambiarEstado(Estado.Hit);
         }
     }
 
@@ -431,37 +315,25 @@ public class Boss : MonoBehaviour
 
         if (prefabMuerte != null)
         {
-            GameObject muerte =
-                Instantiate(
-                    prefabMuerte,
-                    transform.position,
-                    transform.rotation
-                );
-
-            muerte.transform.localScale =
-                transform.localScale;
-
-            muerte.SetActive(true);
+            GameObject clonMuerte = Instantiate(prefabMuerte, transform.position, transform.rotation);
+            clonMuerte.transform.localScale = transform.localScale;
+            clonMuerte.SetActive(true);
         }
 
         Destroy(gameObject);
     }
 
-    void DebugAnimator()
+    void SetBool(string param, bool value)
     {
-        Debug.Log("===== PARÁMETROS ANIMATOR =====");
-
-        foreach (AnimatorControllerParameter param
-                 in animator.parameters)
-        {
-            Debug.Log(
-                "Nombre: " +
-                param.name +
-                " | Tipo: " +
-                param.type
-            );
-        }
-
-        Debug.Log("================================");
+        if (animator) animator.SetBool(param, value);
     }
+
+    void SetTrigger(string param)
+    {
+        if (animator) animator.SetTrigger(param);
+    }
+
+    public Estado ObtenerEstadoActual() => estadoActual;
+    public int ObtenerVida() => vidaActual;
+    public int ObtenerVidaMaxima() => vidaMaxima;
 }
