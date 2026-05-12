@@ -1,6 +1,5 @@
 using UnityEngine;
-using TMPro;
-using System.Collections; // Necesario para las corrutinas del rebote
+using System.Collections;
 
 public class Movimiento : MonoBehaviour
 {
@@ -19,9 +18,10 @@ public class Movimiento : MonoBehaviour
     public float Velocity;
 
     private bool isCrouching;
-
-    public bool IsTeleporting { get; private set; }
     public bool CanMove = true;
+
+    // --- VARIABLES DE TELEPORT ---
+    public bool IsTeleporting { get; private set; }
 
     [Header("Sonido")]
     public AudioClip sonidoSalto;
@@ -31,104 +31,86 @@ public class Movimiento : MonoBehaviour
     {
         Rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
-        audioSource.spatialBlend = 0f;
     }
 
     private void Update()
     {
-        // Aseguramos usar 'velocity'
-        bool enSuelo = Mathf.Abs(Rigidbody2D.linearVelocity.y) < 0.05f;
+        if (IsTeleporting) return;
 
+        bool enSuelo = Mathf.Abs(Rigidbody2D.linearVelocity.y) < 0.05f;
         isCrouching = Input.GetKey(KeyCode.S) && enSuelo;
 
         if (!CanMove)
         {
-            animator.SetBool("EnSuelo", enSuelo);
-            animator.SetBool("Agachado", false);
-            animator.SetBool("Corriendo", false);
+            ActualizarAnimaciones(enSuelo, false, false);
             return;
         }
 
         Horizontal = Input.GetAxisRaw("Horizontal");
 
-        if (Horizontal > 0.0f)
-            transform.localScale = new Vector3(1, 1, 1);
-        else if (Horizontal < 0.0f)
-            transform.localScale = new Vector3(-1, 1, 1);
-
         if (Horizontal != 0.0f)
+        {
+            transform.localScale = new Vector3(Horizontal > 0 ? 1 : -1, 1, 1);
             Velocity = Mathf.Clamp(Velocity + Horizontal * Acceleration * Time.deltaTime, -1.0f, 1.0f);
+        }
         else
+        {
             Velocity -= Velocity * Acceleration * Time.deltaTime;
+        }
 
         if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.W)) &&
-            LastJump < Time.time - TimeBetweenJumps &&
-            enSuelo && !isCrouching)
+            LastJump < Time.time - TimeBetweenJumps && enSuelo && !isCrouching)
         {
             Rigidbody2D.AddForce(Vector2.up * JumpForce);
             LastJump = Time.time;
-
-            if (Game_manager.Instance != null)
-                Game_manager.Instance.totalJumps++;
-
-            if (sonidoSalto != null)
-            {
-                audioSource.clip = sonidoSalto;
-                audioSource.volume = volumenSalto;
-                audioSource.Play();
-            }
+            if (sonidoSalto) audioSource.PlayOneShot(sonidoSalto, volumenSalto);
         }
 
-        animator.SetBool("EnSuelo", enSuelo);
-        animator.SetBool("Agachado", isCrouching);
-        animator.SetBool("Corriendo", Mathf.Abs(Velocity) > 0.1f && !isCrouching);
+        ActualizarAnimaciones(enSuelo, isCrouching, Mathf.Abs(Velocity) > 0.1f);
+    }
+
+    private void ActualizarAnimaciones(bool suelo, bool agachado, bool corriendo)
+    {
+        animator.SetBool("EnSuelo", suelo);
+        animator.SetBool("Agachado", agachado);
+        animator.SetBool("Corriendo", corriendo);
         animator.SetFloat("VelocidadX", Mathf.Abs(Velocity));
         animator.SetFloat("VelocidadY", Rigidbody2D.linearVelocity.y);
     }
 
     private void FixedUpdate()
     {
-        if (!CanMove) return;
-
+        if (!CanMove || IsTeleporting) return;
         float currentSpeed = isCrouching ? Speed * CrouchSpeedMultiplier : Speed;
-
-        Rigidbody2D.linearVelocity = new Vector2(
-            (Mathf.Abs(Velocity) < 0.01f ? 0.0f : Velocity) * currentSpeed,
-            Rigidbody2D.linearVelocity.y
-        );
+        Rigidbody2D.linearVelocity = new Vector2(Velocity * currentSpeed, Rigidbody2D.linearVelocity.y);
     }
 
-    public void SetTeleporting(bool value)
+    // --- MÉTODOS DE TELEPORT ---
+    public void SetTeleporting(bool state)
     {
-        IsTeleporting = value;
+        IsTeleporting = state;
+        if (state)
+        {
+            Velocity = 0f;
+            Rigidbody2D.linearVelocity = Vector2.zero;
+        }
     }
 
-    // ==========================================
-    // M�TODO PARA EL REBOTE DEL HEADSENSOR
-    // ==========================================
+    // --- MÉTODOS DEL BOSS ---
     public void AplicarRebote(Vector2 fuerzaRebote, float tiempoDeBloqueo)
     {
-        if (Rigidbody2D != null)
-        {
-            // Frenamos en el aire para un rebote limpio
-            Rigidbody2D.linearVelocity = Vector2.zero;
-            Velocity = 0f; // Reiniciamos tu variable de aceleraci�n para que no te deslices
-
-            // Aplicamos el salto/empuje
-            Rigidbody2D.AddForce(fuerzaRebote, ForceMode2D.Impulse);
-
-            // Quitamos el control temporalmente usando tu variable CanMove
-            StartCoroutine(BloquearMovimientoRutina(tiempoDeBloqueo));
-        }
+        Rigidbody2D.linearVelocity = Vector2.zero;
+        Velocity = 0f;
+        Rigidbody2D.AddForce(fuerzaRebote, ForceMode2D.Impulse);
+        StartCoroutine(BloquearMovimientoRutina(tiempoDeBloqueo));
     }
 
     private IEnumerator BloquearMovimientoRutina(float tiempo)
     {
-        CanMove = false; // Te quita el control
-        yield return new WaitForSeconds(tiempo); // Espera el tiempo de bloqueo (0.2s)
-        CanMove = true;  // Te devuelve el control
+        CanMove = false;
+        yield return new WaitForSeconds(tiempo);
+        CanMove = true;
     }
 }
