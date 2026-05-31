@@ -10,6 +10,10 @@ public class FinishLine : MonoBehaviour
     [Range(0f, 1f)] public float volumen = 1f;
     public AudioSource musicaFondo;
 
+    [Header("Progreso y Puntuación")]
+    public int nivelADesbloquear = 2;
+    public int nivelActual = 1; // NUEVO: Para saber qué nivel estamos jugando
+
     private bool triggered = false;
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -20,13 +24,28 @@ public class FinishLine : MonoBehaviour
         {
             triggered = true;
 
+            // --- GUARDAR EL PROGRESO ---
+            int progresoActual = PlayerPrefs.GetInt("NivelAlcanzado", 1);
+            if (nivelADesbloquear > progresoActual)
+            {
+                PlayerPrefs.SetInt("NivelAlcanzado", nivelADesbloquear);
+            }
+
+            // --- NUEVO: GUARDAR LA PUNTUACIÓN DE ESTE NIVEL ---
+            if (playerScore != null)
+            {
+                // Guarda los puntos bajo un nombre único, ej: "Puntos_Nivel_1"
+                PlayerPrefs.SetInt("Puntos_Nivel_" + nivelActual, playerScore.puntuacion);
+            }
+            PlayerPrefs.Save();
+            // --------------------------------------------------
+
             if (musicaFondo != null)
             {
                 musicaFondo.ignoreListenerPause = false;
                 musicaFondo.Stop();
             }
 
-            // Suena el audio de victoria
             if (sonidoVictoria != null)
             {
                 AudioSource audioTemp = gameObject.AddComponent<AudioSource>();
@@ -38,7 +57,6 @@ public class FinishLine : MonoBehaviour
                 Destroy(audioTemp, sonidoVictoria.length);
             }
 
-            // ⏸ Pausar el juego
             Time.timeScale = 0f;
 
             if (scoreboardScreen != null)
@@ -49,10 +67,6 @@ public class FinishLine : MonoBehaviour
             if (ui != null && playerScore != null)
             {
                 ui.MostrarFinal(playerScore.puntuacion);
-            }
-            else
-            {
-                Debug.LogWarning("Falta referencia en FinishLine");
             }
         }
     }

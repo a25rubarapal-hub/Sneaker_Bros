@@ -9,11 +9,26 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 9946ee1b3cbd7484f998c62522b793a6
   - enabled: 1
-    path: Assets/Scenes/SneackersBros.unity
-    guid: 3867662f78571c540894f1b4d866f5e5
+    path: Assets/Scenes/Niveles.unity
+    guid: 740e61049d41c774c818ae8ab8e6b8ef
   - enabled: 1
     path: Assets/Scenes/Tutorial.unity
     guid: d8b4b4aca115a0243ad028dda743688e
+  - enabled: 1
+    path: Assets/Scenes/Nivel1.unity
+    guid: 3867662f78571c540894f1b4d866f5e5
+  - enabled: 1
+    path: Assets/Scenes/Nivel2.unity
+    guid: e489437d7a25ee1458576f5bb96b8f87
+  - enabled: 1
+    path: Assets/Scenes/NivelMiniBoss.unity
+    guid: fa81b58eaae0c0b4880e5c9c6d2fc792
+  - enabled: 1
+    path: Assets/Scenes/Nivel4.unity
+    guid: 48a7b87058f9e1c45a96fccf97aadf50
+  - enabled: 1
+    path: Assets/Scenes/NivelBoss.unity
+    guid: 23a9f44aa356e81409637e15dce6e8bb
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 69d3511b671743d4b9f685379d4b1c6a, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
